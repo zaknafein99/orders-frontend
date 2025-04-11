@@ -1,0 +1,245 @@
+.order-tables {
+  background-color: white;
+  border-radius: 8px;
+  padding: 1.25rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow-x: auto;
+  width: 100%;
+}
+
+.tables-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.tables-header h2 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #212529;
+  margin: 0;
+  background-color: rgba(52, 152, 219, 0.08);
+  padding: 0.5rem 1rem;
+  border-radius: 25px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.refresh-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: transparent;
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+  padding: 0.4rem 0.8rem;
+  font-size: 0.9rem;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.refresh-btn:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.refresh-icon {
+  font-size: 1rem;
+}
+
+.table-section {
+  margin-bottom: 1.5rem;
+}
+
+.table-section h3 {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 0.75rem 1rem;
+  border-radius: 0.375rem 0.375rem 0 0;
+  font-size: 0.9rem;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.table-section h3 i {
+  color: var(--secondary-color);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  background-color: white;
+  border-radius: 0 0 0.375rem 0.375rem;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+th {
+  background-color: #f8f9fa;
+  padding: 0.75rem;
+  text-align: left;
+  font-weight: 600;
+  color: #495057;
+  border-bottom: 2px solid #dee2e6;
+  white-space: nowrap;
+}
+
+td {
+  padding: 0.75rem;
+  border-bottom: 1px solid #dee2e6;
+  color: #212529;
+  vertical-align: middle;
+}
+
+tr:nth-child(even) {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+tr:hover {
+  background-color: rgba(230, 34, 34, 0.05);
+}
+
+.date-cell {
+  width: 120px;
+  white-space: nowrap;
+  color: #6c757d;
+  font-size: 0.8125rem;
+}
+
+.customer-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.customer-name {
+  font-weight: 500;
+  color: #212529;
+}
+
+.customer-phone {
+  font-size: 0.75rem;
+  color: #6c757d;
+}
+
+.truck-selection-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 150px;
+}
+
+.truck-select {
+  padding: 0.375rem 0.75rem;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  width: 100%;
+  font-size: 0.8125rem;
+  background-color: white;
+  color: #495057;
+  height: 28px;
+  cursor: pointer;
+}
+
+.truck-select:focus {
+  border-color: var(--primary-color);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(230, 34, 34, 0.1);
+}
+
+.loading-indicator {
+  font-size: 0.75rem;
+  color: #6c757d;
+  font-style: italic;
+}
+
+.selected-truck-indicator {
+  font-size: 0.75rem;
+  color: var(--primary-color);
+  font-weight: 500;
+}
+
+.deliver-btn {
+  background-color: var(--secondary-color);
+  color: var(--primary-color);
+  border: 2px solid var(--primary-color);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.deliver-btn:hover {
+  background-color: var(--primary-color);
+  color: var(--secondary-color);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.deliver-btn:disabled {
+  background-color: #cccccc;
+  border-color: #999999;
+  color: #666666;
+  cursor: not-allowed;
+  opacity: 0.6;
+  transform: none;
+  box-shadow: none;
+}
+
+.empty-state {
+  padding: 2rem;
+  text-align: center;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  color: #6c757d;
+  border: 1px dashed #dee2e6;
+}
+
+.empty-state i {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  opacity: 0.7;
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.loading i {
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+}
+
+.loading p {
+  color: #6c757d;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .table-section {
+    overflow-x: auto;
+  }
+  
+  table {
+    min-width: 800px;
+  }
+} 
