@@ -33,10 +33,6 @@ export default {
     console.log('Making request to: /orders/pending with Authorization: Bearer ' + (token ? token.substring(0, 15) + '...' : 'No token'))
     
     return api.get('/orders/pending', {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
       // Add cache busting parameter when forcing refresh
       params: force ? { _t: new Date().getTime() } : {}
     })
@@ -127,10 +123,6 @@ export default {
     
     // Use a query parameter to specifically request delivered orders
     return api.get('/orders/delivered', {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
       // Add cache busting parameter when forcing refresh
       params: force ? { _t: new Date().getTime() } : {}
     })

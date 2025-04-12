@@ -1,48 +1,48 @@
-&lt;template&gt;
-  &lt;div class="orders"&gt;
-    &lt;div class="flex justify-between items-center mb-6"&gt;
-      &lt;h1 class="text-2xl font-semibold"&gt;{{ $t('orders') }}&lt;/h1&gt;
-      &lt;button class="btn btn-primary"&gt;
-        &lt;i class="fas fa-plus mr-2"&gt;&lt;/i&gt;
+<template>
+  <div class="orders">
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-2xl font-semibold">{{ $t('orders') }}</h1>
+      <button class="btn btn-primary">
+        <i class="fas fa-plus mr-2"></i>
         {{ $t('createOrder') }}
-      &lt;/button&gt;
-    &lt;/div&gt;
+      </button>
+    </div>
 
-    &lt;div class="card"&gt;
-      &lt;div class="orders-content"&gt;
-        &lt;div class="table-container"&gt;
-          &lt;table class="table"&gt;
-            &lt;thead&gt;
-              &lt;tr&gt;
-                &lt;th&gt;{{ $t('orderNumber') }}&lt;/th&gt;
-                &lt;th&gt;{{ $t('customer') }}&lt;/th&gt;
-                &lt;th&gt;{{ $t('status') }}&lt;/th&gt;
-                &lt;th&gt;{{ $t('total') }}&lt;/th&gt;
-                &lt;th&gt;{{ $t('createdAt') }}&lt;/th&gt;
-                &lt;th&gt;{{ $t('actions') }}&lt;/th&gt;
-              &lt;/tr&gt;
-            &lt;/thead&gt;
-            &lt;tbody&gt;
-              &lt;tr v-if="true" class="text-center"&gt;
-                &lt;td colspan="6" class="py-8"&gt;
-                  &lt;i class="fas fa-box-open text-4xl text-slate-400 mb-2"&gt;&lt;/i&gt;
-                  &lt;p class="text-slate-500"&gt;{{ $t('noOrders') }}&lt;/p&gt;
-                &lt;/td&gt;
-              &lt;/tr&gt;
-            &lt;/tbody&gt;
-          &lt;/table&gt;
-        &lt;/div&gt;
-      &lt;/div&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-&lt;/template&gt;
+    <div class="card">
+      <div class="orders-content">
+        <div class="table-container">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>{{ $t('orderNumber') }}</th>
+                <th>{{ $t('customer') }}</th>
+                <th>{{ $t('status') }}</th>
+                <th>{{ $t('total') }}</th>
+                <th>{{ $t('createdAt') }}</th>
+                <th>{{ $t('actions') }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-if="true" class="text-center">
+                <td colspan="6" class="py-8">
+                  <i class="fas fa-box-open text-4xl text-slate-400 mb-2"></i>
+                  <p class="text-slate-500">{{ $t('noOrders') }}</p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
 
-&lt;script setup&gt;
+<script setup>
 // Orders component logic will be added here
-&lt;/script&gt;
+</script>
 
-&lt;style scoped&gt;
+<style scoped>
 .orders {
   @apply w-full;
 }
-&lt;/style&gt;
+</style>

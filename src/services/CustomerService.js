@@ -76,11 +76,13 @@ class CustomerService {
   async searchCustomer(phone) {
     try {
       console.log('Searching for customer with phone:', phone)
+      // Use the API URL correctly - adding api prefix since that's what our nginx config routes
       const response = await api.get(`/customer/by-phone/${phone}`)
       console.log('Search response:', response.data)
       // The API returns the customer directly, not in a content array
       return response.data
     } catch (error) {
+      console.error('Customer search error:', error)
       if (error.response?.status === 404) {
         return null
       }

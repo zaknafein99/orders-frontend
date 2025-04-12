@@ -147,6 +147,7 @@ import NewOrderModal from './NewOrderModal.vue'
 import AuthService from '../services/AuthService'
 import { translations } from '../utils/translations'
 import NewCustomerModal from './NewCustomerModal.vue'
+import CustomerService from '../services/CustomerService'
 
 // Authentication
 const isAuthenticated = ref(false)
@@ -276,9 +277,10 @@ const searchCustomer = async () => {
   showNewCustomerButton.value = false
 
   try {
-    const response = await axios.get(`/customer/by-phone/${phoneNumber.value}?size=5&page=0`)
-    if (response.data) {
-      customer.value = response.data
+    // Use CustomerService instead of direct axios call
+    const customerData = await CustomerService.searchCustomer(phoneNumber.value)
+    if (customerData) {
+      customer.value = customerData
       showNewCustomerButton.value = false
       searchError.value = ''
     } else {
