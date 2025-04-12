@@ -2,7 +2,7 @@ import axios from 'axios'
 
 // Create an Axios instance with custom config
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || '/api', // Use environment variable or fallback to /api for proxy
+  baseURL: 'http://localhost:8080',
   headers: {
     'Content-Type': 'application/json'
   }
@@ -31,19 +31,13 @@ api.interceptors.request.use(
   }
 )
 
-// Add a response interceptor to handle errors
+// Add a response interceptor for error handling
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    return response
+  },
   (error) => {
-    console.error('API Error:', error.response || error.message)
-    
-    // Only handle 401 Unauthorized errors
-    if (error.response?.status === 401) {
-      console.log('401 Unauthorized error - clearing token and redirecting to login')
-      localStorage.removeItem('token')
-      window.location.href = '/login'
-    }
-    // For all other errors, just reject the promise
+    console.error('API Error:', error.response || error)
     return Promise.reject(error)
   }
 )

@@ -155,6 +155,7 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount, nextTick, watch } from 'vue'
 import axios from 'axios'
+import DashboardService from '../services/DashboardService'
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -170,7 +171,7 @@ import {
   BarController
 } from 'chart.js'
 import 'chartjs-adapter-date-fns'
-import { format } from 'date-fns'
+import { format, isValid, parseISO, startOfWeek, endOfWeek, addDays, eachDayOfInterval } from 'date-fns'
 import { enUS, es } from 'date-fns/locale'
 import { formatCurrency, formatDate, formatNumber } from '../utils/formatters'
 import { useI18n } from 'vue-i18n'
@@ -291,18 +292,15 @@ const fetchAllData = async () => {
 
 const fetchStatistics = async () => {
   try {
-    const response = await axios.get('/dashboard/statistics')
-    // Merge response data with defaults to ensure we always have valid structure
+    const response = await DashboardService.getStatistics()
     statistics.value = {
-      ...statistics.value,
-      ...response.data,
       today: {
         ...statistics.value.today,
-        ...(response.data?.today || {})
+        ...(response?.today || {})
       },
       month: {
         ...statistics.value.month,
-        ...(response.data?.month || {})
+        ...(response?.month || {})
       }
     }
   } catch (error) {
@@ -312,8 +310,8 @@ const fetchStatistics = async () => {
 
 const fetchDailySales = async () => {
   try {
-    const response = await axios.get(`/dashboard/truck-sales/daily?date=${selectedDate.value}`)
-    dailySales.value = response.data
+    const response = await DashboardService.getDailySales(selectedDate.value)
+    dailySales.value = response
   } catch (error) {
     console.error(t('errorFetchingDailySales'), error)
   }
@@ -322,11 +320,11 @@ const fetchDailySales = async () => {
 const fetchWeeklySales = async () => {
   try {
     console.log(`Fetching weekly sales for start date: ${selectedWeekStart.value}`);
-    const response = await axios.get(`/dashboard/truck-sales/weekly?startDate=${selectedWeekStart.value}`)
-    console.log('Weekly sales response:', response.data);
+    const response = await DashboardService.getWeeklySales(selectedWeekStart.value)
+    console.log('Weekly sales response:', response);
     
     // Make sure we have dailySales data
-    if (response.data && Array.isArray(response.data.dailySales)) {
+    if (response && Array.isArray(response.dailySales)) {
       const startDate = new Date(selectedWeekStart.value);
       
       // Create a complete week array with all 7 days, even if no orders on some days
@@ -337,7 +335,7 @@ const fetchWeeklySales = async () => {
         const formattedDate = format(currentDate, 'yyyy-MM-dd');
         
         // Find if we have data for this date
-        const existingData = response.data.dailySales.find(day => 
+        const existingData = response.dailySales.find(day => 
           day.date === formattedDate || 
           (day.date && new Date(day.date).toDateString() === currentDate.toDateString())
         );
@@ -358,7 +356,7 @@ const fetchWeeklySales = async () => {
       
       // Update the weeklySales object with processed data
       weeklySales.value = {
-        ...response.data,
+        ...response,
         startDate: selectedWeekStart.value,
         endDate: format(new Date(startDate.getTime() + 6 * 24 * 60 * 60 * 1000), 'yyyy-MM-dd'),
         dailySales: completeWeekData
@@ -382,27 +380,27 @@ const fetchMonthlySales = async () => {
     const formattedDate = format(firstDayOfMonth, 'yyyy-MM-dd');
     
     console.log(`Fetching monthly sales for date: ${formattedDate}`);
-    const response = await axios.get(`/dashboard/truck-sales/monthly?date=${formattedDate}`);
-    console.log('Monthly data response:', response.data);
+    const response = await DashboardService.getMonthlySales(formattedDate);
+    console.log('Monthly data response:', response);
     
     let extractedData = [];
     
     // Check various possible data structures in the response
-    if (response.data) {
-      if (Array.isArray(response.data.dailySales)) {
+    if (response) {
+      if (Array.isArray(response.dailySales)) {
         // Direct dailySales array
-        extractedData = response.data.dailySales;
-      } else if (response.data.month && Array.isArray(response.data.month.dailySales)) {
+        extractedData = response.dailySales;
+      } else if (response.month && Array.isArray(response.month.dailySales)) {
         // dailySales nested in month object
-        extractedData = response.data.month.dailySales;
-      } else if (Array.isArray(response.data)) {
+        extractedData = response.month.dailySales;
+      } else if (Array.isArray(response)) {
         // Response itself is an array
-        extractedData = response.data;
-      } else if (typeof response.data === 'object') {
+        extractedData = response;
+      } else if (typeof response === 'object') {
         // Extract data from any array property we can find
-        for (const key in response.data) {
-          if (Array.isArray(response.data[key])) {
-            extractedData = response.data[key];
+        for (const key in response) {
+          if (Array.isArray(response[key])) {
+            extractedData = response[key];
             break;
           }
         }
