@@ -63,12 +63,22 @@
         <div class="card bg-white p-4 rounded-lg shadow">
           <div class="flex justify-between items-center mb-4">
             <h3 class="text-lg font-semibold text-slate-700">{{ $t('dailyTruckSales') }}</h3>
-            <input 
-              type="date" 
-              v-model="selectedDate" 
-              class="form-input"
-              @change="fetchDailySales"
-            >
+            <div class="flex items-center gap-2">
+              <input 
+                type="date" 
+                v-model="selectedDate" 
+                class="form-input"
+                @change="fetchDailySales"
+              >
+              <button 
+                @click="downloadDailySalesPDF" 
+                class="btn btn-primary flex items-center gap-2"
+                :disabled="loading"
+              >
+                <i class="fas fa-file-pdf"></i>
+                {{ $t('downloadPDF') }}
+              </button>
+            </div>
           </div>
           <div class="overflow-x-auto">
             <table class="table">
@@ -700,6 +710,18 @@ const getChartCanvas = () => {
   
   // Last resort - query selector
   return document.querySelector('canvas#salesChart');
+};
+
+const downloadDailySalesPDF = async () => {
+  try {
+    loading.value = true;
+    await DashboardService.downloadDailySalesPDF(selectedDate.value);
+  } catch (error) {
+    console.error('Error downloading PDF:', error);
+    // You might want to show an error message to the user here
+  } finally {
+    loading.value = false;
+  }
 };
 </script>
 

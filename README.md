@@ -216,3 +216,56 @@ This section outlines some of the main API endpoints provided by the backend. Au
 *   Axios
 *   Pinia (likely, based on store structure)
 *   Node.js / npm (for development environment)
+
+## Installation
+
+### Node.js Setup
+
+1. **Install Node.js**
+
+   This project requires Node.js version 20.x. You can install it using one of the following methods:
+
+   **Using NVM (Node Version Manager) - Recommended:**
+   ```bash
+   # Install NVM
+   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+   # Or with wget
+   wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+   
+   # Reload shell configuration
+   source ~/.bashrc  # or source ~/.zshrc
+   
+   # Install Node.js 20
+   nvm install 20
+   nvm use 20
+   ```
+
+   **Direct download:**
+   Download and install from [Node.js official website](https://nodejs.org/)
+
+   **Using package manager:**
+   ```bash
+   # For Ubuntu/Debian
+   curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+   sudo apt-get install -y nodejs
+   
+   # For macOS (using Homebrew)
+   brew install node@20
+   ```
+
+2. **Verify installation**
+   ```bash
+   node -v  # Should show v20.x.x
+   npm -v   # Should show the npm version
+   ```
+
+3. **Install project dependencies**
+   ```bash
+   cd orders-frontend
+   npm ci   # Clean install as specified in package-lock.json
+   ```
+
+4. **Start development server**
+   ```bash
+   npm run dev
+   ```
