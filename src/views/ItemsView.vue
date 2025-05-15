@@ -1,6 +1,6 @@
 <template>
   <div class="items-view">
-    <h1>Gestión de Inventario</h1>
+    <h1>{{ $t('manageInventory', { default: 'Gestión de Inventario'}) }}</h1>
     <ItemsManagement />
   </div>
 </template>

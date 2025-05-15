@@ -2,25 +2,25 @@
   <div v-if="show" class="new-order-modal-wrapper" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 9999; background-color: rgba(0, 0, 0, 0.5); display: flex; justify-content: center; align-items: center;">
     <div class="new-order-modal-content" style="width: 95vw !important; max-width: 90vw !important; height: 90vh !important; background-color: white; border-radius: 8px; padding: 15px; position: relative; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); border: 1px solid #e62222; display: flex; flex-direction: column; overflow: auto;">
       <span class="close" @click="closeModal">&times;</span>
-      <h2>{{ translations.newOrder }} - {{ customer?.name }}</h2>
+      <h2>{{ $t('newOrder') }} - {{ customer?.name }}</h2>
       
       <!-- Items loading state -->
       <div v-if="isLoadingItems" class="modal-loading">
         <div class="spinner"></div>
-        <p>Cargando items disponibles...</p>
+        <p>{{ $t('loadingItems', { default: 'Cargando items disponibles...'}) }}</p>
       </div>
       
       <!-- Items error state -->
       <div v-if="itemsError" class="modal-error">
         <p>{{ itemsError }}</p>
-        <button @click="fetchItems" class="retry-btn">Reintentar</button>
+        <button @click="fetchItems" class="retry-btn">{{ $t('retry', { default: 'Reintentar'}) }}</button>
       </div>
       
       <!-- Modal layout -->
       <div class="order-modal-layout" style="display: flex; width: 100%; gap: 20px; flex: 1; height: calc(90vh - 100px); overflow: hidden;">
         <!-- Left side: Available items list -->
         <div class="available-items-section" style="flex: 7; min-width: 0; height: 100%; overflow-y: auto; padding: 10px; border: 1px solid #e5e7eb; border-radius: 8px; background-color: #f9fafb;">
-          <h3>Items Disponibles</h3>
+          <h3>{{ $t('availableItems', { default: 'Items Disponibles'}) }}</h3>
           
           <!-- Display inventory alerts/warnings if any -->
           <div v-if="inventoryAlerts.length > 0" class="inventory-warnings">
@@ -59,7 +59,7 @@
             :error="orderError"
             :success-message="orderSuccess"
             :inventory-alerts="inventoryAlerts"
-            :inventory-projection-message="'La existencia en inventario se actualizará cuando el pedido sea marcado como entregado.'"
+            :inventory-projection-message="$t('inventoryProjectionNote', { default: 'La existencia en inventario se actualizará cuando el pedido sea marcado como entregado.'})"
             @remove-item="removeFromOrder"
             @submit="submitOrder"
             @update-truck="updateTruck"

@@ -7,28 +7,28 @@
         :disabled="currentPage === 0 || isLoading"
         class="pagination-btn"
       >
-        &laquo; Anterior
+        &laquo; {{ $t('previous', { default: 'Anterior'}) }}
       </button>
-      <span class="page-info">Página {{ currentPage + 1 }} de {{ totalPages }}</span>
+      <span class="page-info">{{ $t('pageInfo', { currentPage: currentPage + 1, totalPages: totalPages, default: 'Página ' + (currentPage + 1) + ' de ' + totalPages }) }}</span>
       <button 
         @click="$emit('change-page', currentPage + 1)" 
         :disabled="currentPage >= totalPages - 1 || isLoading"
         class="pagination-btn"
       >
-        Siguiente &raquo;
+        {{ $t('next', { default: 'Siguiente'}) }} &raquo;
       </button>
     </div>
     
     <!-- Items loading state -->
     <div v-if="isLoading" class="items-loading">
       <div class="spinner"></div>
-      <p>Cargando items...</p>
+      <p>{{ $t('loadingItems', { default: 'Cargando items...'}) }}</p>
     </div>
     
     <!-- Items error state -->
     <div v-if="error" class="items-error">
       <p>{{ error }}</p>
-      <button @click="$emit('retry')" class="retry-btn">Reintentar</button>
+      <button @click="$emit('retry')" class="retry-btn">{{ $t('retry', { default: 'Reintentar'}) }}</button>
     </div>
     
     <!-- Items list -->
@@ -40,17 +40,17 @@
         </div>
         <p class="item-description">{{ item.description }}</p>
         <div class="item-metadata">
-          <span class="item-category">Categoría: {{ item.category }}</span>
+          <span class="item-category">{{ $t('category', { default: 'Categoría' }) }}: {{ item.category }}</span>
           
           <!-- Display inventory status with different styling based on quantity -->
           <span :class="['inventory-status', item.quantity <= 0 ? 'out-of-stock' : 'in-stock']">
-            <i class="fas fa-boxes"></i> Disponible: {{ item.quantity }}
+            <i class="fas fa-boxes"></i> {{ $t('available', { default: 'Disponible' }) }}: {{ item.quantity }}
           </span>
         </div>
         
         <!-- Show projected inventory if set -->
         <div v-if="item.inventoryAfterOrder !== undefined" class="inventory-projection">
-          <span>Después del pedido: {{ item.inventoryAfterOrder }}</span>
+          <span>{{ $t('afterOrder', { default: 'Después del pedido' }) }}: {{ item.inventoryAfterOrder }}</span>
         </div>
         
         <!-- Item quantity selector -->
@@ -74,8 +74,8 @@
             :class="{'disabled': item.quantity <= 0}" 
             :disabled="item.quantity <= 0"
             @click="addItem(item)">
-            <span v-if="item.quantity > 0">Agregar al Pedido</span>
-            <span v-else>Sin Stock</span>
+            <span v-if="item.quantity > 0">{{ $t('addToOrder', { default: 'Agregar al Pedido'}) }}</span>
+            <span v-else>{{ $t('outOfStock', { default: 'Sin Stock'}) }}</span>
           </button>
         </div>
       </div>
@@ -83,7 +83,7 @@
     
     <!-- No items state -->
     <div v-if="!isLoading && !error && items.length === 0" class="no-items">
-      <p>No hay items disponibles</p>
+      <p>{{ $t('noItemsAvailable', { default: 'No hay items disponibles'}) }}</p>
     </div>
   </div>
 </template>

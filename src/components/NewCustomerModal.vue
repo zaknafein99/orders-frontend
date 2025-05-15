@@ -2,7 +2,7 @@
   <div v-if="isOpen" class="modal-overlay" @click="closeModal">
     <div class="modal-content" @click.stop>
       <div class="modal-header">
-        <h2>Nuevo Cliente</h2>
+        <h2>{{ $t('newCustomer', { default: 'Nuevo Cliente'}) }}</h2>
         <button class="close-btn" @click="closeModal">
           <i class="fas fa-times"></i>
         </button>
@@ -14,55 +14,55 @@
         </div>
 
         <div class="form-group">
-          <label for="name">Nombre</label>
+          <label for="name">{{ $t('name', { default: 'Nombre'}) }}</label>
           <input 
             type="text" 
             id="name" 
             v-model="form.name" 
             required
-            placeholder="Nombre completo"
+            :placeholder="$t('fullNamePlaceholder', { default: 'Nombre completo'})"
           >
         </div>
         
         <div class="form-group">
-          <label for="phone">Teléfono</label>
+          <label for="phone">{{ $t('phoneNumber', { default: 'Teléfono'}) }}</label>
           <input 
             type="tel" 
             id="phone" 
             v-model="form.phone" 
             required
-            placeholder="Número de teléfono"
+            :placeholder="$t('phoneNumberPlaceholder', { default: 'Número de teléfono'})"
           >
         </div>
         
         <div class="form-group">
-          <label for="address">Dirección</label>
+          <label for="address">{{ $t('address', { default: 'Dirección'}) }}</label>
           <textarea 
             id="address" 
             v-model="form.address" 
             required
-            placeholder="Dirección completa"
+            :placeholder="$t('fullAddressPlaceholder', { default: 'Dirección completa'})"
             rows="3"
           ></textarea>
         </div>
         
         <div class="form-group">
-          <label for="notes">Notas</label>
+          <label for="notes">{{ $t('notes', { default: 'Notas'}) }}</label>
           <textarea 
             id="notes" 
             v-model="form.notes" 
-            placeholder="Notas adicionales"
+            :placeholder="$t('additionalNotesPlaceholder', { default: 'Notas adicionales'})"
             rows="2"
           ></textarea>
         </div>
         
         <div class="modal-footer">
           <button type="button" class="cancel-btn" @click="closeModal">
-            Cancelar
+            {{ $t('cancel', { default: 'Cancelar'}) }}
           </button>
           <button type="submit" class="submit-btn" :disabled="isSubmitting">
             <i class="fas fa-spinner fa-spin" v-if="isSubmitting"></i>
-            Crear Cliente
+            {{ $t('createCustomer', { default: 'Crear Cliente'}) }}
           </button>
         </div>
       </form>
@@ -134,7 +134,7 @@ const handleSubmit = async () => {
     
     // Validate phone number
     if (!form.value.phone || form.value.phone.length < 3) {
-      error.value = 'El número de teléfono debe tener al menos 3 dígitos'
+      error.value = t('phoneNumberTooShort', { default: 'El número de teléfono debe tener al menos 3 dígitos' })
       return
     }
     
@@ -144,9 +144,9 @@ const handleSubmit = async () => {
   } catch (error) {
     console.error('Error creating customer:', error)
     if (error.response?.status === 409) {
-      error.value = 'Ya existe un cliente con ese número de teléfono'
+      error.value = t('customerAlreadyExistsPhone', { default: 'Ya existe un cliente con ese número de teléfono' })
     } else {
-      error.value = 'Error al crear el cliente. Por favor, intente nuevamente.'
+      error.value = t('errorCreatingCustomerRetry', { default: 'Error al crear el cliente. Por favor, intente nuevamente.' })
     }
   } finally {
     isSubmitting.value = false

@@ -1,9 +1,9 @@
 <template>
   <div class="customers">
     <div class="page-header">
-      <h1>Gestión de Clientes</h1>
+      <h1>{{ $t('manageCustomers', { default: 'Gestión de Clientes'}) }}</h1>
       <button @click="openNewCustomerModal" class="btn-primary">
-        <i class="fas fa-user-plus"></i> Nuevo Cliente
+        <i class="fas fa-user-plus"></i> {{ $t('newCustomer', { default: 'Nuevo Cliente'}) }}
       </button>
     </div>
 
@@ -11,14 +11,14 @@
       <!-- Search and Filter Section -->
       <div class="search-section card">
         <div class="form-group">
-          <label for="searchPhone">Buscar por Teléfono</label>
+          <label for="searchPhone">{{ $t('searchByPhone', { default: 'Buscar por Teléfono'}) }}</label>
           <div class="input-with-icon">
             <i class="fas fa-phone"></i>
             <input
               id="searchPhone"
               v-model="searchPhone"
               type="text"
-              placeholder="Ingrese número de teléfono"
+              :placeholder="$t('enterPhoneNumberPlaceholder', { default: 'Ingrese número de teléfono'})"
               @input="handleSearch"
             />
           </div>
@@ -30,7 +30,7 @@
         <!-- Page Size Selector -->
         <div class="table-controls">
           <div class="page-size-selector">
-            <label for="pageSize">Mostrar:</label>
+            <label for="pageSize">{{ $t('show', { default: 'Mostrar'}) }}:</label>
             <select 
               id="pageSize" 
               v-model="pageSize" 
@@ -43,13 +43,13 @@
               <option value="75">75</option>
               <option value="100">100</option>
             </select>
-            <span class="entries-text">registros</span>
+            <span class="entries-text">{{ $t('records', { default: 'registros'}) }}</span>
           </div>
         </div>
 
         <div v-if="isLoading" class="loading-state">
           <div class="spinner"></div>
-          <p>Cargando clientes...</p>
+          <p>{{ $t('loadingCustomers', { default: 'Cargando clientes...'}) }}</p>
         </div>
 
         <div v-else-if="error" class="alert alert-danger">
@@ -58,18 +58,18 @@
 
         <div v-else-if="customers.length === 0" class="empty-state">
           <i class="fas fa-users"></i>
-          <p>No se encontraron clientes</p>
+          <p>{{ $t('noCustomersFound', { default: 'No se encontraron clientes'}) }}</p>
         </div>
 
         <table v-else class="data-table">
           <thead>
             <tr>
-              <th>Nombre</th>
-              <th>Teléfono</th>
-              <th>Dirección</th>
-              <th>Tipo</th>
-              <th>Estado</th>
-              <th>Acciones</th>
+              <th>{{ $t('name') }}</th>
+              <th>{{ $t('phoneNumber') }}</th>
+              <th>{{ $t('address') }}</th>
+              <th>{{ $t('customerType') }}</th>
+              <th>{{ $t('customerState') }}</th>
+              <th>{{ $t('actions') }}</th>
             </tr>
           </thead>
           <tbody>
@@ -79,19 +79,19 @@
               <td>{{ customer.address }}</td>
               <td>
                 <span class="badge" :class="customer.type === 'C' ? 'badge-customer' : 'badge-supplier'">
-                  {{ customer.type === 'C' ? 'Cliente' : 'Proveedor' }}
+                  {{ customer.type === 'C' ? $t('customer') : $t('supplier', { default: 'Proveedor'}) }}
                 </span>
               </td>
               <td>
                 <span class="badge" :class="customer.state === 'A' ? 'badge-active' : 'badge-inactive'">
-                  {{ customer.state === 'A' ? 'Activo' : 'Inactivo' }}
+                  {{ customer.state === 'A' ? $t('active') : $t('inactive') }}
                 </span>
               </td>
               <td class="actions">
-                <button @click="editCustomer(customer)" class="btn-icon" title="Editar">
+                <button @click="editCustomer(customer)" class="btn-icon" :title="$t('edit', { default: 'Editar'})">
                   <i class="fas fa-edit"></i>
                 </button>
-                <button @click="confirmDelete(customer)" class="btn-icon" title="Eliminar">
+                <button @click="confirmDelete(customer)" class="btn-icon" :title="$t('delete', { default: 'Eliminar'})">
                   <i class="fas fa-trash"></i>
                 </button>
               </td>
@@ -109,7 +109,7 @@
             <i class="fas fa-chevron-left"></i>
           </button>
           <span class="page-info">
-            Página {{ currentPage + 1 }} de {{ totalPages }}
+            {{ $t('pageInfo', { currentPage: currentPage + 1, totalPages: totalPages, default: 'Página ' + (currentPage + 1) + ' de ' + totalPages }) }}
           </span>
           <button 
             :disabled="currentPage === totalPages - 1"
@@ -136,20 +136,20 @@
     <div v-if="showDeleteModal" class="modal-overlay" @click="closeDeleteModal">
       <div class="modal-content" @click.stop>
         <div class="modal-header">
-          <h2>Confirmar Eliminación</h2>
+          <h2>{{ $t('confirmDelete', { default: 'Confirmar Eliminación'}) }}</h2>
           <button class="close-btn" @click="closeDeleteModal">
             <i class="fas fa-times"></i>
           </button>
         </div>
         <div class="modal-body">
-          <p>¿Está seguro que desea eliminar este cliente?</p>
+          <p>{{ $t('confirmDeleteCustomerMsg', { default: '¿Está seguro que desea eliminar este cliente?'}) }}</p>
           <p class="customer-name">{{ selectedCustomer?.name }}</p>
         </div>
         <div class="modal-footer">
-          <button class="btn-secondary" @click="closeDeleteModal">Cancelar</button>
+          <button class="btn-secondary" @click="closeDeleteModal">{{ $t('cancel', { default: 'Cancelar'}) }}</button>
           <button class="btn-danger" @click="deleteCustomer" :disabled="isDeleting">
             <i v-if="isDeleting" class="fas fa-spinner fa-spin"></i>
-            Eliminar
+            {{ $t('delete', { default: 'Eliminar'}) }}
           </button>
         </div>
       </div>
@@ -188,7 +188,7 @@ const loadCustomers = async () => {
     totalPages.value = response.totalPages
   } catch (err) {
     console.error('Error loading customers:', err)
-    error.value = 'Failed to load customers. Please try again.'
+    error.value = t('errorLoadingCustomers', { default: 'Failed to load customers. Please try again.'})
   } finally {
     isLoading.value = false
   }
@@ -212,7 +212,7 @@ const handleSearch = async () => {
       console.error('Error searching customer:', err)
       // Don't show error for 404 (no customer found)
       if (err.response?.status !== 404) {
-        error.value = 'Failed to search customer. Please try again.'
+        error.value = t('errorSearchingCustomer', { default: 'Failed to search customer. Please try again.'})
       } else {
         customers.value = []
         totalPages.value = 0
@@ -263,7 +263,7 @@ const deleteCustomer = async () => {
     eventBus.emit('customer-deleted', selectedCustomer.value)
   } catch (err) {
     console.error('Error deleting customer:', err)
-    error.value = 'Failed to delete customer. Please try again.'
+    error.value = t('errorDeletingCustomer', { default: 'Failed to delete customer. Please try again.'})
   } finally {
     isDeleting.value = false
   }

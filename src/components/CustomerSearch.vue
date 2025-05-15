@@ -2,31 +2,31 @@
   <div class="customer-search card">
     <div v-if="!isAuthenticated" class="auth-section">
       <div class="card-header">
-        <h3 class="card-title"><i class="fas fa-lock"></i> Iniciar sesión para continuar</h3>
+        <h3 class="card-title"><i class="fas fa-lock"></i> {{ $t('loginToContinue') }}</h3>
       </div>
       
       <div class="form-group">
-        <label for="email">Correo Electrónico</label>
+        <label for="email">{{ $t('email') }}</label>
         <div class="input-with-icon">
           <i class="fas fa-envelope"></i>
           <input
             id="email"
             v-model="authData.email"
             type="email"
-            placeholder="Correo electrónico"
+            :placeholder="$t('email')"
           />
         </div>
       </div>
       
       <div class="form-group">
-        <label for="password">Contraseña</label>
+        <label for="password">{{ $t('password') }}</label>
         <div class="input-with-icon">
           <i class="fas fa-key"></i>
           <input
             id="password"
             v-model="authData.password"
             type="password"
-            placeholder="Contraseña"
+            :placeholder="$t('password')"
           />
         </div>
       </div>
@@ -34,7 +34,7 @@
       <button @click="login" :disabled="isLoading" class="btn-primary btn-full" style="background-color: #e62222; color: white;">
         <i v-if="isLoading" class="fas fa-spinner fa-spin"></i>
         <i v-else class="fas fa-sign-in-alt"></i>
-        {{ isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión' }}
+        {{ isLoading ? $t('loggingIn') : $t('login') }}
       </button>
       
       <div v-if="authError" class="alert alert-danger">
@@ -44,18 +44,18 @@
 
     <div v-if="isAuthenticated" class="search-section">
       <div class="card-header">
-        <h3 class="card-title"><i class="fas fa-search"></i> Buscar Cliente</h3>
+        <h3 class="card-title"><i class="fas fa-search"></i> {{ $t('searchCustomer') }}</h3>
       </div>
       
       <div class="form-group">
-        <label for="phoneNumber">Teléfono</label>
+        <label for="phoneNumber">{{ $t('phoneNumber') }}</label>
         <div class="input-with-icon">
           <i class="fas fa-phone"></i>
           <input
             id="phoneNumber"
             v-model="phoneNumber"
             type="text"
-            placeholder="Buscar por número de teléfono"
+            :placeholder="$t('searchByPhoneNumber')"
             @input="handleSearchInput"
           />
         </div>
@@ -63,7 +63,7 @@
       
       <div v-if="isSearching" class="loading-state">
         <div class="spinner"></div>
-        <p>Buscando...</p>
+        <p>{{ $t('searching') }}...</p>
       </div>
       
       <div v-if="searchError" class="alert alert-danger">
@@ -77,7 +77,7 @@
           class="btn-primary new-customer-btn"
         >
           <i class="fas fa-user-plus"></i>
-          Nuevo Cliente
+          {{ $t('addNewCustomer') }}
         </button>
       </div>
 
@@ -85,7 +85,7 @@
         <div class="customer-header">
           <h3><i class="fas fa-user"></i> {{ customer.name }}</h3>
           <span class="customer-badge" :class="customer.state === 'A' ? 'badge-active' : 'badge-inactive'">
-            {{ customer.state === 'A' ? 'Activo' : 'Inactivo' }}
+            {{ customer.state === 'A' ? $t('active') : $t('inactive') }}
           </span>
         </div>
         
@@ -93,7 +93,7 @@
           <div class="info-item">
             <i class="fas fa-phone"></i>
             <div>
-              <span class="info-label">Teléfono</span>
+              <span class="info-label">{{ $t('phoneNumber') }}</span>
               <span class="info-value">{{ customer.phoneNumber }}</span>
             </div>
           </div>
@@ -101,7 +101,7 @@
           <div class="info-item">
             <i class="fas fa-map-marker-alt"></i>
             <div>
-              <span class="info-label">Dirección</span>
+              <span class="info-label">{{ $t('address') }}</span>
               <span class="info-value">{{ customer.address }}</span>
             </div>
           </div>
@@ -109,14 +109,14 @@
           <div class="info-item">
             <i class="fas fa-tag"></i>
             <div>
-              <span class="info-label">Tipo</span>
-              <span class="info-value">{{ customer.type === 'C' ? 'Cliente' : 'Proveedor' }}</span>
+              <span class="info-label">{{ $t('customerType') }}</span>
+              <span class="info-value">{{ customer.type === 'C' ? $t('customer') : $t('supplier', { default: 'Proveedor' }) }}</span>
             </div>
           </div>
         </div>
         
         <button @click="openNewOrderModal" class="btn-secondary btn-full new-order-btn">
-          <i class="fas fa-plus-circle"></i> Nuevo Pedido
+          <i class="fas fa-plus-circle"></i> {{ $t('newOrder') }}
         </button>
       </div>
     </div>
@@ -258,7 +258,7 @@ const handleSearchInput = () => {
   if (phoneNumber.value.length < 3) {
     customer.value = null
     showNewCustomerButton.value = false
-    searchError.value = phoneNumber.value.length > 0 ? 'El número de teléfono debe tener al menos 3 dígitos' : ''
+    searchError.value = phoneNumber.value.length > 0 ? t('phoneNumberTooShort', { default: 'El número de teléfono debe tener al menos 3 dígitos' }) : ''
     return
   }
 
@@ -290,15 +290,15 @@ const searchCustomer = async () => {
     console.error('Error fetching customer:', error)
     if (error.response?.status === 404) {
       // Customer not found - show new customer button
-      searchError.value = 'No se encontró ningún cliente con ese número'
+      searchError.value = t('customerNotFoundWithNumber', { default: 'No se encontró ningún cliente con ese número' })
       showNewCustomerButton.value = true
       customer.value = null
     } else if (error.response?.status === 403) {
-      searchError.value = 'No tiene permisos para buscar clientes'
+      searchError.value = t('permissionDeniedSearchCustomers', { default: 'No tiene permisos para buscar clientes' })
       showNewCustomerButton.value = false
       customer.value = null
     } else {
-      searchError.value = 'Error al buscar el cliente. Por favor, intente nuevamente.'
+      searchError.value = t('errorSearchingCustomerRetry', { default: 'Error al buscar el cliente. Por favor, intente nuevamente.' })
       showNewCustomerButton.value = false
       customer.value = null
     }

@@ -2,7 +2,7 @@
   <div v-if="isOpen" class="modal-overlay" @click="closeModal">
     <div class="modal-content" @click.stop>
       <div class="modal-header">
-        <h2>{{ isEditing ? 'Editar Item' : 'Nuevo Item' }}</h2>
+        <h2>{{ isEditing ? $t('editItem', { default: 'Editar Item'}) : $t('newItem', { default: 'Nuevo Item'}) }}</h2>
         <button class="close-btn" @click="closeModal">
           <i class="fas fa-times"></i>
         </button>
@@ -14,18 +14,18 @@
         </div>
 
         <div class="form-group">
-          <label for="name">Nombre</label>
+          <label for="name">{{ $t('itemName', { default: 'Nombre'}) }}</label>
           <input 
             type="text" 
             id="name" 
             v-model="form.name" 
             required
-            placeholder="Nombre del producto"
+            :placeholder="$t('productNamePlaceholder', { default: 'Nombre del producto'})"
           >
         </div>
         
         <div class="form-group">
-          <label for="price">Precio</label>
+          <label for="price">{{ $t('itemPrice', { default: 'Precio'}) }}</label>
           <input 
             type="number" 
             id="price" 
@@ -38,43 +38,43 @@
         </div>
         
         <div class="form-group">
-          <label for="category">Categoría</label>
+          <label for="category">{{ $t('itemCategory', { default: 'Categoría'}) }}</label>
           <input 
             type="text" 
             id="category" 
             v-model="form.category" 
-            placeholder="Categoría del producto"
+            :placeholder="$t('productCategoryPlaceholder', { default: 'Categoría del producto'})"
           >
         </div>
         
         <div class="form-group">
-          <label for="description">Descripción</label>
+          <label for="description">{{ $t('itemDescription', { default: 'Descripción'}) }}</label>
           <textarea 
             id="description" 
             v-model="form.description" 
-            placeholder="Descripción del producto"
+            :placeholder="$t('productDescriptionPlaceholder', { default: 'Descripción del producto'})"
             rows="3"
           ></textarea>
         </div>
         
         <div class="form-group">
-          <label for="quantity">Cantidad</label>
+          <label for="quantity">{{ $t('quantity', { default: 'Cantidad'}) }}</label>
           <input 
             type="number" 
             id="quantity" 
             v-model="form.quantity" 
             min="0"
-            placeholder="Cantidad disponible"
+            :placeholder="$t('availableQuantityPlaceholder', { default: 'Cantidad disponible'})"
           >
         </div>
         
         <div class="modal-footer">
           <button type="button" class="cancel-btn" @click="closeModal">
-            Cancelar
+            {{ $t('cancel', { default: 'Cancelar'}) }}
           </button>
           <button type="submit" class="submit-btn" :disabled="isSubmitting">
             <i class="fas fa-spinner fa-spin" v-if="isSubmitting"></i>
-            {{ isEditing ? 'Actualizar Item' : 'Crear Item' }}
+            {{ isEditing ? $t('updateItem', { default: 'Actualizar Item'}) : $t('createItem', { default: 'Crear Item'}) }}
           </button>
         </div>
       </form>
@@ -140,12 +140,12 @@ const closeModal = () => {
 
 const validateForm = () => {
   if (!form.value.name || form.value.name.trim() === '') {
-    error.value = 'El nombre del producto es obligatorio'
+    error.value = t('itemNameRequired', { default: 'El nombre del producto es obligatorio' })
     return false
   }
   
   if (form.value.price <= 0) {
-    error.value = 'El precio debe ser mayor que cero'
+    error.value = t('itemPricePositive', { default: 'El precio debe ser mayor que cero' })
     return false
   }
   
@@ -189,8 +189,8 @@ const handleSubmit = async () => {
       }
     } else {
       error.value = isEditing.value 
-        ? 'Error al actualizar el item. Por favor, intente nuevamente.'
-        : 'Error al crear el item. Por favor, intente nuevamente.'
+        ? t('errorUpdatingItemRetry', { default: 'Error al actualizar el item. Por favor, intente nuevamente.' })
+        : t('errorCreatingItemRetry', { default: 'Error al crear el item. Por favor, intente nuevamente.' })
     }
   } finally {
     isSubmitting.value = false

@@ -1,36 +1,36 @@
 <template>
   <div class="order-tables">
     <div class="tables-header">
-      <h2><i class="fas fa-clipboard-list"></i> Panel de Pedidos</h2>
+      <h2><i class="fas fa-clipboard-list"></i> {{ $t('ordersPanel', { default: 'Panel de Pedidos'}) }}</h2>
       <div class="header-actions">
         <span class="last-update">{{ lastUpdateText }}</span>
         <button @click="fetchOrders" class="refresh-btn">
-          <i class="fas fa-sync-alt refresh-icon"></i> Actualizar
+          <i class="fas fa-sync-alt refresh-icon"></i> {{ $t('refresh', { default: 'Actualizar'}) }}
         </button>
       </div>
     </div>
 
     <div v-if="isLoading" class="loading">
       <i class="fas fa-spinner fa-spin fa-2x"></i>
-      <p>Cargando pedidos...</p>
+      <p>{{ $t('loadingOrders', { default: 'Cargando pedidos...'}) }}</p>
     </div>
 
     <div v-else>
       <div class="table-section">
-        <h3 class="bg-primary-600"><i class="fas fa-clock text-secondary-500"></i> Pedidos Pendientes</h3>
+        <h3 class="bg-primary-600"><i class="fas fa-clock text-secondary-500"></i> {{ $t('pendingOrders') }}</h3>
         <div v-if="pendingOrders.length === 0" class="empty-state">
           <i class="fas fa-inbox"></i>
-          <p>{{ translations.noOrders }}</p>
+          <p>{{ $t('noOrders') }}</p>
         </div>
         <table v-else>
           <thead>
             <tr>
-              <th class="date-column">{{ translations.createdAt }}</th>
-              <th>{{ translations.customer }}</th>
-              <th>{{ translations.itemCount }}</th>
-              <th>{{ translations.total }}</th>
-              <th>{{ translations.truck }}</th>
-              <th>{{ translations.actions }}</th>
+              <th class="date-column">{{ $t('createdAt') }}</th>
+              <th>{{ $t('customer') }}</th>
+              <th>{{ $t('itemCount') }}</th>
+              <th>{{ $t('total') }}</th>
+              <th>{{ $t('truck', { default: 'Móvil'}) }}</th>
+              <th>{{ $t('actions') }}</th>
             </tr>
           </thead>
           <TransitionGroup name="order-list" tag="tbody">
@@ -51,10 +51,10 @@
                     class="truck-select"
                     @change="onTruckSelected(order.id, orderTrucks[order.id])"
                   >
-                    <option value="">{{ translations.selectTruck }}</option>
+                    <option value="">{{ $t('selectTruck', { default: 'Seleccionar Móvil'}) }}</option>
                     <option v-for="truck in availableTrucks" :key="truck.id" :value="String(truck.id)">{{ truck.name }}</option>
                   </select>
-                  <div v-if="truckUpdateLoading[order.id]" class="loading-indicator">{{ translations.updating }}...</div>
+                  <div v-if="truckUpdateLoading[order.id]" class="loading-indicator">{{ $t('updating', { default: 'Actualizando'}) }}...</div>
                   <div v-if="orderTrucks[order.id] && !truckUpdateLoading[order.id]" class="selected-truck-indicator">
                     {{ getSelectedTruckName(orderTrucks[order.id]) }}
                   </div>
@@ -67,13 +67,13 @@
                     class="action-btn deliver-btn"
                     :disabled="!order.truck && !orderTrucks[order.id]"
                   >
-                    <i class="fas fa-truck"></i> {{ translations.markDelivered }}
+                    <i class="fas fa-truck"></i> {{ $t('markDelivered') }}
                   </button>
                   <button 
                     @click="showCancelConfirmation(order.id)" 
                     class="action-btn cancel-btn"
                   >
-                    <i class="fas fa-times-circle"></i> {{ translations.cancelOrder || 'Cancelar' }}
+                    <i class="fas fa-times-circle"></i> {{ $t('cancelOrder') }}
                   </button>
                 </div>
               </td>
@@ -83,20 +83,20 @@
       </div>
 
       <div class="table-section">
-        <h3 class="bg-primary-600"><i class="fas fa-truck text-secondary-500"></i> Pedidos Entregados</h3>
+        <h3 class="bg-primary-600"><i class="fas fa-truck text-secondary-500"></i> {{ $t('deliveredOrders') }}</h3>
         <div v-if="deliveredOrders.length === 0" class="empty-state">
           <i class="fas fa-inbox"></i>
-          <p>{{ translations.noOrders }}</p>
+          <p>{{ $t('noOrders') }}</p>
         </div>
         <table v-else>
           <thead>
             <tr>
-              <th class="date-column">{{ translations.createdAt }}</th>
-              <th>{{ translations.customer }}</th>
-              <th>{{ translations.itemCount }}</th>
-              <th>{{ translations.total }}</th>
-              <th>{{ translations.truck }}</th>
-              <th class="date-column">{{ translations.deliveredAt }}</th>
+              <th class="date-column">{{ $t('createdAt') }}</th>
+              <th>{{ $t('customer') }}</th>
+              <th>{{ $t('itemCount') }}</th>
+              <th>{{ $t('total') }}</th>
+              <th>{{ $t('truck', { default: 'Móvil'}) }}</th>
+              <th class="date-column">{{ $t('deliveredAt') }}</th>
             </tr>
           </thead>
           <TransitionGroup name="order-list" tag="tbody">
@@ -117,10 +117,10 @@
                     class="truck-select"
                     @change="onTruckSelected(order.id, orderTrucks[order.id])"
                   >
-                    <option value="">{{ translations.selectTruck }}</option>
+                    <option value="">{{ $t('selectTruck', { default: 'Seleccionar Móvil'}) }}</option>
                     <option v-for="truck in availableTrucks" :key="truck.id" :value="String(truck.id)">{{ truck.name }}</option>
                   </select>
-                  <div v-if="truckUpdateLoading[order.id]" class="loading-indicator">{{ translations.updating }}...</div>
+                  <div v-if="truckUpdateLoading[order.id]" class="loading-indicator">{{ $t('updating', { default: 'Actualizando'}) }}...</div>
                   <div v-if="orderTrucks[order.id] && !truckUpdateLoading[order.id]" class="selected-truck-indicator">
                     {{ getSelectedTruckName(orderTrucks[order.id]) }}
                   </div>
@@ -138,17 +138,17 @@
   <div v-if="showConfirmation" class="modal-backdrop">
     <div class="confirmation-modal">
       <h3 class="confirmation-modal-title">
-        <i class="fas fa-exclamation-triangle"></i> Cancelar Pedido
+        <i class="fas fa-exclamation-triangle"></i> {{ $t('cancelOrder') }}
       </h3>
       <p class="confirmation-modal-message">
-        ¿Está seguro que desea cancelar este pedido? Esta acción no se puede deshacer y el pedido será eliminado permanentemente.
+        {{ $t('confirmCancelOrderMsg', { default: '¿Está seguro que desea cancelar este pedido? Esta acción no se puede deshacer y el pedido será eliminado permanentemente.'}) }}
       </p>
       <div class="confirmation-modal-actions">
         <button @click="hideConfirmation" class="cancel-action-btn">
-          No, mantener pedido
+          {{ $t('keepOrder', { default: 'No, mantener pedido'}) }}
         </button>
         <button @click="confirmCancelOrder" class="confirm-cancel-btn">
-          Sí, cancelar pedido
+          {{ $t('yesCancelOrder', { default: 'Sí, cancelar pedido'}) }}
         </button>
       </div>
     </div>

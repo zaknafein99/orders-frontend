@@ -1,27 +1,27 @@
 <template>
   <div class="order-summary-component">
-    <h3>{{ translations.currentOrder }}</h3>
+    <h3>{{ $t('currentOrder', { default: 'Pedido Actual'}) }}</h3>
     
     <!-- Empty order state -->
     <div v-if="items.length === 0" class="empty-order">
-      <p>{{ translations.emptyOrder }}</p>
-      <p class="instruction">{{ translations.addItemsInstruction }}</p>
+      <p>{{ $t('emptyOrder', { default: 'El pedido está vacío'}) }}</p>
+      <p class="instruction">{{ $t('addItemsInstruction', { default: 'Agrega artículos desde la lista de disponibles.'}) }}</p>
     </div>
     
     <!-- Order items -->
     <div v-else class="order-content">
       <!-- Truck selection -->
       <div class="truck-selection">
-        <label for="truck-select">{{ translations.selectTruck }}:</label>
+        <label for="truck-select">{{ $t('selectTruck') }}:</label>
         <div v-if="isLoadingTrucks" class="loading-indicator">
           <div class="spinner-sm"></div>
-          <span>Loading trucks...</span>
+          <span>{{ $t('loadingTrucks', { default: 'Cargando móviles...'}) }}</span>
         </div>
         <div v-else-if="trucksError" class="error-message">
           {{ trucksError }}
         </div>
         <select v-else id="truck-select" v-model="selectedTruck" @change="updateTruck">
-          <option v-if="trucks.length === 0" disabled>No trucks available</option>
+          <option v-if="trucks.length === 0" disabled>{{ $t('noTrucksAvailable', { default: 'No hay móviles disponibles'}) }}</option>
           <option v-for="truck in trucks" :key="truck.id" :value="truck">
             {{ truck.name }}
           </option>
@@ -30,7 +30,7 @@
       
       <!-- Order date -->
       <div class="order-date">
-        <label for="order-date">{{ translations.orderDate }}:</label>
+        <label for="order-date">{{ $t('orderDate') }}:</label>
         <input 
           type="date" 
           id="order-date" 
@@ -48,7 +48,7 @@
             <span class="item-quantity">x{{ item.quantity }}</span>
             <span class="item-price">{{ formatPrice(Number(item.price) * item.quantity) }}</span>
           </div>
-          <button @click="removeItem(index)" class="remove-btn">{{ translations.remove }}</button>
+          <button @click="removeItem(index)" class="remove-btn">{{ $t('remove', { default: 'Quitar'}) }}</button>
         </div>
       </div>
       
@@ -56,21 +56,20 @@
       <div v-if="inventoryAlerts.length > 0" class="inventory-alerts">
         <div class="inventory-alert-title">
           <i class="fas fa-exclamation-triangle"></i>
-          Advertencias de inventario
+          {{ $t('inventoryWarnings', { default: 'Advertencias de inventario'}) }}
         </div>
         <div v-for="alert in inventoryAlerts" :key="alert.id" class="inventory-alert">
           <p>
             <strong>{{ alert.name }}:</strong> 
-            Solicitando <span class="alert-requested">{{ alert.requested }}</span> unidades, 
-            pero solo hay <span class="alert-available">{{ alert.available }}</span> disponibles.
+            {{ $t('inventoryAlertDetail', { requested: alert.requested, available: alert.available, default: 'Solicitando ' + alert.requested + ' unidades, pero solo hay ' + alert.available + ' disponibles.' }) }}
           </p>
         </div>
-        <p class="inventory-note">{{ inventoryProjectionMessage || 'La orden podrá procesarse de todas formas.' }}</p>
+        <p class="inventory-note">{{ inventoryProjectionMessage || $t('inventoryProjectionNote', { default: 'La orden podrá procesarse de todas formas.'}) }}</p>
       </div>
       
       <!-- Delivery Fee -->
       <div class="delivery-fee">
-        <label for="delivery-fee">{{ translations.deliveryFee || 'Delivery Fee' }}:</label>
+        <label for="delivery-fee">{{ $t('deliveryFee') }}:</label>
         <div class="delivery-fee-input">
           <span class="currency-symbol">$</span>
           <input 
@@ -87,7 +86,7 @@
       <!-- Order summary -->
       <div class="order-total-section">
         <div class="order-total">
-          <strong>{{ translations.total }}:</strong> {{ formatPrice(calculateOrderTotal(items) + Number(deliveryFee)) }}
+          <strong>{{ $t('total') }}:</strong> {{ formatPrice(calculateOrderTotal(items) + Number(deliveryFee)) }}
         </div>
         <button 
           @click="submitOrder" 
@@ -95,7 +94,7 @@
           class="submit-btn"
         >
           <i class="fas fa-check-circle"></i>
-          {{ isSubmitting ? translations.submitting : 'Crear Pedido' }}
+          {{ isSubmitting ? $t('submitting') : $t('createOrder') }}
         </button>
         <div v-if="error" class="order-error">
           {{ error }}

@@ -62,7 +62,7 @@
         <!-- Daily Sales -->
         <div class="card bg-white p-4 rounded-lg shadow">
           <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-semibold text-slate-700">{{ $t('dailyTruckSales') }}</h3>
+            <h3 class="text-lg font-semibold text-slate-700">{{ $t('dailyTruckSales', { default: 'Ventas Diarias por Móvil'}) }}</h3>
             <div class="flex items-center gap-2">
               <input 
                 type="date" 
@@ -76,7 +76,7 @@
                 :disabled="loading"
               >
                 <i class="fas fa-file-pdf"></i>
-                {{ $t('downloadPDF') }}
+                {{ $t('downloadPDF', { default: 'Descargar PDF'}) }}
               </button>
             </div>
           </div>
@@ -84,15 +84,15 @@
             <table class="table">
               <thead>
                 <tr>
-                  <th>{{ $t('truck') }}</th>
+                  <th>{{ $t('truck', { default: 'Móvil'}) }}</th>
                   <th>{{ $t('orders') }}</th>
                   <th>{{ $t('totalSales') }}</th>
-                  <th>{{ $t('actions') || 'Actions' }}</th>
+                  <th>{{ $t('actions') }}</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="(sales, truckId) in dailySales.truckSales" :key="truckId">
-                  <td>{{ $t('truck') }} {{ truckId }}</td>
+                  <td>{{ $t('truck', { default: 'Móvil'}) }} {{ truckId }}</td>
                   <td>{{ sales.orderCount }}</td>
                   <td>${{ formatNumber(sales.totalSales) }}</td>
                   <td>
@@ -102,7 +102,7 @@
                       :disabled="loading"
                     >
                       <i class="fas fa-file-pdf"></i>
-                      {{ $t('downloadPDF') || 'PDF' }}
+                      {{ $t('downloadPDF', { default: 'PDF'}) }}
                     </button>
                   </td>
                 </tr>
@@ -110,7 +110,7 @@
             </table>
           </div>
           <div class="mt-4 text-sm text-slate-500">
-            <p><i class="fas fa-info-circle mr-1"></i> {{ $t('truckPdfInfo') || 'Click on the PDF button next to a truck to download its daily report.' }}</p>
+            <p><i class="fas fa-info-circle mr-1"></i> {{ $t('truckPdfInfo', { default: 'Click en el botón PDF al lado de un móvil para descargar su reporte diario.' }) }}</p>
           </div>
         </div>
 
@@ -158,7 +158,7 @@
               </table>
               <div v-else class="text-center py-8 text-slate-500">
                 <i class="fas fa-calendar-week text-4xl mb-2"></i>
-                <p>{{ $t('noData') || 'No weekly sales data available' }}</p>
+                <p>{{ $t('noWeeklySalesData', { default: 'No hay datos de ventas semanales disponibles' }) }}</p>
               </div>
             </div>
           </div>
@@ -175,17 +175,17 @@
 
       <!-- Truck Delivery Report -->
       <div class="card bg-white p-4 rounded-lg shadow mb-6">
-        <h3 class="text-lg font-semibold text-slate-700 mb-4">{{ $t('truckDeliveryReport') || 'Truck Delivery Report' }}</h3>
+        <h3 class="text-lg font-semibold text-slate-700 mb-4">{{ $t('truckDeliveryReport', { default: 'Reporte de Entregas por Móvil'}) }}</h3>
         
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
           <!-- Truck Selection -->
           <div>
-            <label class="block text-sm font-medium text-slate-700 mb-1">{{ $t('selectTruck') || 'Select Truck' }}</label>
+            <label class="block text-sm font-medium text-slate-700 mb-1">{{ $t('selectTruck', { default: 'Seleccionar Móvil'}) }}</label>
             <select 
               v-model="selectedTruckId" 
               class="form-select w-full rounded-md border-slate-300 shadow-sm"
             >
-              <option value="">{{ $t('selectTruck') || 'Select Truck' }}</option>
+              <option value="">{{ $t('selectTruck', { default: 'Seleccionar Móvil'}) }}</option>
               <option v-for="truck in trucks" :key="truck.id" :value="truck.id">
                 {{ truck.name }}
               </option>
@@ -194,7 +194,7 @@
           
           <!-- Start Date -->
           <div>
-            <label class="block text-sm font-medium text-slate-700 mb-1">{{ $t('startDate') || 'Start Date' }}</label>
+            <label class="block text-sm font-medium text-slate-700 mb-1">{{ $t('startDate', { default: 'Fecha Inicio'}) }}</label>
             <input 
               type="date" 
               v-model="reportStartDate" 
@@ -204,7 +204,7 @@
           
           <!-- End Date -->
           <div>
-            <label class="block text-sm font-medium text-slate-700 mb-1">{{ $t('endDate') || 'End Date' }}</label>
+            <label class="block text-sm font-medium text-slate-700 mb-1">{{ $t('endDate', { default: 'Fecha Fin'}) }}</label>
             <input 
               type="date" 
               v-model="reportEndDate" 
@@ -220,13 +220,13 @@
               :disabled="!selectedTruckId || !reportStartDate || !reportEndDate || loading"
             >
               <i class="fas fa-file-pdf"></i>
-              {{ $t('generatePDFReport') || 'Generate PDF Report' }}
+              {{ $t('generatePDFReport', { default: 'Generar Reporte PDF'}) }}
             </button>
           </div>
         </div>
         
         <div v-if="!selectedTruckId || !reportStartDate || !reportEndDate" class="text-center py-4 text-slate-500">
-          {{ $t('selectTruckAndDateRange') || 'Please select a truck and date range to generate a report' }}
+          {{ $t('selectTruckAndDateRange', { default: 'Por favor seleccione un móvil y rango de fechas para generar el reporte' }) }}
         </div>
       </div>
     </div>

@@ -1,9 +1,9 @@
 <template>
   <div class="items-management">
     <div class="items-header">
-      <h2>Gestión de Productos</h2>
+      <h2>{{ $t('itemsManagement', { default: 'Gestión de Productos'}) }}</h2>
       <button class="add-item-btn" @click="showNewItemModal = true">
-        <i class="fas fa-plus"></i> Nuevo Producto
+        <i class="fas fa-plus"></i> {{ $t('newItem', { default: 'Nuevo Producto'}) }}
       </button>
     </div>
     
@@ -26,16 +26,16 @@
     <!-- Loading state -->
     <div v-if="isLoading" class="items-loading">
       <div class="spinner"></div>
-      <p>Cargando productos...</p>
+      <p>{{ $t('loadingItems', { default: 'Cargando productos...'}) }}</p>
     </div>
     
     <!-- Empty state -->
     <div v-if="!isLoading && !error && items.length === 0" class="no-items">
       <div class="empty-state">
         <i class="fas fa-box-open empty-icon"></i>
-        <p>No hay productos disponibles</p>
+        <p>{{ $t('noItemsAvailable', { default: 'No hay productos disponibles'}) }}</p>
         <button @click="showNewItemModal = true" class="add-item-btn">
-          <i class="fas fa-plus"></i> Agregar Producto
+          <i class="fas fa-plus"></i> {{ $t('addItem', { default: 'Agregar Producto'}) }}
         </button>
       </div>
     </div>
@@ -45,12 +45,12 @@
       <table>
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Categoría</th>
-            <th>Precio</th>
-            <th>Cantidad</th>
-            <th>Acciones</th>
+            <th>{{ $t('itemId', { default: 'ID'}) }}</th>
+            <th>{{ $t('itemName', { default: 'Nombre'}) }}</th>
+            <th>{{ $t('itemCategory', { default: 'Categoría'}) }}</th>
+            <th>{{ $t('itemPrice', { default: 'Precio'}) }}</th>
+            <th>{{ $t('quantity', { default: 'Cantidad'}) }}</th>
+            <th>{{ $t('actions', { default: 'Acciones'}) }}</th>
           </tr>
         </thead>
         <tbody>
@@ -79,15 +79,15 @@
           :disabled="currentPage === 0 || isLoading"
           class="pagination-btn"
         >
-          &laquo; Anterior
+          &laquo; {{ $t('previous', { default: 'Anterior'}) }}
         </button>
-        <span class="page-info">Página {{ currentPage + 1 }} de {{ totalPages }}</span>
+        <span class="page-info">{{ $t('pageInfo', { currentPage: currentPage + 1, totalPages: totalPages, default: 'Página ' + (currentPage + 1) + ' de ' + totalPages }) }}</span>
         <button 
           @click="changePage(currentPage + 1)" 
           :disabled="currentPage >= totalPages - 1 || isLoading"
           class="pagination-btn"
         >
-          Siguiente &raquo;
+          {{ $t('next', { default: 'Siguiente'}) }} &raquo;
         </button>
       </div>
     </div>
@@ -95,13 +95,13 @@
     <!-- Delete confirmation modal -->
     <div v-if="showDeleteModal" class="delete-modal-overlay" @click="showDeleteModal = false">
       <div class="delete-modal-content" @click.stop>
-        <h3>Confirmar Eliminación</h3>
-        <p>¿Está seguro que desea eliminar el producto <strong>{{ itemToDelete?.name }}</strong>?</p>
+        <h3>{{ $t('confirmDelete', { default: 'Confirmar Eliminación'}) }}</h3>
+        <p>{{ $t('confirmDeleteItemMsg', { itemName: itemToDelete?.name, default: '¿Está seguro que desea eliminar el producto ' + itemToDelete?.name + '?' }) }}</p>
         <div class="delete-modal-actions">
-          <button @click="showDeleteModal = false" class="cancel-btn">Cancelar</button>
+          <button @click="showDeleteModal = false" class="cancel-btn">{{ $t('cancel', { default: 'Cancelar'}) }}</button>
           <button @click="deleteItem" class="delete-confirm-btn" :disabled="isDeleting">
             <i v-if="isDeleting" class="fas fa-spinner fa-spin"></i>
-            Eliminar
+            {{ $t('delete', { default: 'Eliminar'}) }}
           </button>
         </div>
       </div>
