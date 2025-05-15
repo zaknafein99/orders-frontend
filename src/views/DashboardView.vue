@@ -102,7 +102,7 @@
                       :disabled="loading"
                     >
                       <i class="fas fa-file-pdf"></i>
-                      {{ $t('downloadPDF', { default: 'PDF'}) }}
+                      {{ $t('downloadPDF', { default: 'Descargar PDF'}) }} 
                     </button>
                   </td>
                 </tr>
@@ -173,62 +173,6 @@
         </div>
       </div>
 
-      <!-- Truck Delivery Report -->
-      <div class="card bg-white p-4 rounded-lg shadow mb-6">
-        <h3 class="text-lg font-semibold text-slate-700 mb-4">{{ $t('truckDeliveryReport', { default: 'Reporte de Entregas por Móvil'}) }}</h3>
-        
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-          <!-- Truck Selection -->
-          <div>
-            <label class="block text-sm font-medium text-slate-700 mb-1">{{ $t('selectTruck', { default: 'Seleccionar Móvil'}) }}</label>
-            <select 
-              v-model="selectedTruckId" 
-              class="form-select w-full rounded-md border-slate-300 shadow-sm"
-            >
-              <option value="">{{ $t('selectTruck', { default: 'Seleccionar Móvil'}) }}</option>
-              <option v-for="truck in trucks" :key="truck.id" :value="truck.id">
-                {{ truck.name }}
-              </option>
-            </select>
-          </div>
-          
-          <!-- Start Date -->
-          <div>
-            <label class="block text-sm font-medium text-slate-700 mb-1">{{ $t('startDate', { default: 'Fecha Inicio'}) }}</label>
-            <input 
-              type="date" 
-              v-model="reportStartDate" 
-              class="form-input w-full rounded-md border-slate-300 shadow-sm"
-            >
-          </div>
-          
-          <!-- End Date -->
-          <div>
-            <label class="block text-sm font-medium text-slate-700 mb-1">{{ $t('endDate', { default: 'Fecha Fin'}) }}</label>
-            <input 
-              type="date" 
-              v-model="reportEndDate" 
-              class="form-input w-full rounded-md border-slate-300 shadow-sm"
-            >
-          </div>
-          
-          <!-- Generate Report Button -->
-          <div class="flex items-end">
-            <button 
-              @click="downloadTruckDeliveryReport" 
-              class="btn btn-primary w-full flex items-center justify-center gap-2"
-              :disabled="!selectedTruckId || !reportStartDate || !reportEndDate || loading"
-            >
-              <i class="fas fa-file-pdf"></i>
-              {{ $t('generatePDFReport', { default: 'Generar Reporte PDF'}) }}
-            </button>
-          </div>
-        </div>
-        
-        <div v-if="!selectedTruckId || !reportStartDate || !reportEndDate" class="text-center py-4 text-slate-500">
-          {{ $t('selectTruckAndDateRange', { default: 'Por favor seleccione un móvil y rango de fechas para generar el reporte' }) }}
-        </div>
-      </div>
     </div>
   </div>
 </template>
@@ -338,7 +282,18 @@ onMounted(async () => {
     await fetchAllData();
     
     // Initialize chart after data is loaded
-    initChart();
+    // The chartData ref is already populated by fetchAllData -> prepareChartData (which calls initializeChart)
+    // So, direct call to initChart() here might be redundant if fetchAllData already triggers it.
+    // However, ensure chartData.value is up-to-date before initializing.
+    if (chartData.value && chartData.value.length > 0) {
+      initializeChart(chartData.value);
+    } else {
+      // If fetchAllData didn't populate chartData (e.g. error or no data), try fetching monthly sales again for chart
+      const statsResponse = await DashboardService.getStatistics(); // Assuming this was fetched in fetchAllData
+      const monthlySalesForChart = statsResponse.month?.dailySales || [];
+      console.log('[DashboardView] Data for onMounted initChart:', JSON.parse(JSON.stringify(monthlySalesForChart)));
+      initializeChart(monthlySalesForChart);
+    }
   } catch (error) {
     console.error('Error initializing dashboard:', error);
   } finally {
@@ -385,7 +340,10 @@ const fetchAllData = async () => {
     trucks.value = trucksResponse
 
     // Prepare chart data
-    prepareChartData(statsResponse.month?.dailySales || [])
+    const monthlySalesData = statsResponse.month?.dailySales || []
+    console.log('[DashboardView] Monthly sales data for chart in fetchAllData:', JSON.parse(JSON.stringify(monthlySalesData)));
+    chartData.value = monthlySalesData; // Store it in the ref
+    // initializeChart will be called from onMounted or if data was already present
   } catch (error) {
     console.error('Error fetching dashboard data:', error)
   }
@@ -527,55 +485,57 @@ const fetchMonthlySales = async () => {
 
 // Separate chart initialization function
 const initializeChart = (data) => {
+  console.log('[DashboardView] Initializing chart with data:', JSON.parse(JSON.stringify(data)));
   // Schedule for next tick to ensure DOM is updated
   nextTick(() => {
     try {
       // Make sure the chart container exists
       const chartContainer = document.getElementById('chartContainer');
       if (!chartContainer) {
+        console.error('[DashboardView] Chart container not found');
         throw new Error('Chart container not found');
       }
       
       // Ensure we have a canvas - create one if needed
       let canvas = getChartCanvas();
       if (!canvas) {
-        console.log('Canvas not found, creating new canvas element');
+        console.warn('[DashboardView] Canvas not found by ref or ID, creating new canvas element');
         canvas = document.createElement('canvas');
         canvas.id = 'salesChart';
-        chartContainer.innerHTML = '';
+        chartContainer.innerHTML = ''; // Clear container before appending
         chartContainer.appendChild(canvas);
-        // Update the ref if possible
-        salesChartCanvas.value = canvas;
+        salesChartCanvas.value = canvas; // Attempt to update ref
       }
-      
+      console.log('[DashboardView] Canvas element for chart:', canvas);
       updateSalesChart(data);
     } catch (error) {
-      console.error('Failed to initialize chart:', error);
+      console.error('[DashboardView] Failed to initialize chart structure:', error);
       // Retry initialization with increasing delay
       if (chartInitAttempts < MAX_CHART_INIT_ATTEMPTS) {
         chartInitAttempts++;
         const delay = chartInitAttempts * 200; // Increase delay with each attempt
-        console.log(`Retrying chart initialization in ${delay}ms (attempt ${chartInitAttempts}/${MAX_CHART_INIT_ATTEMPTS})`);
+        console.log(`[DashboardView] Retrying chart initialization in ${delay}ms (attempt ${chartInitAttempts}/${MAX_CHART_INIT_ATTEMPTS})`);
         setTimeout(() => initializeChart(data), delay);
       } else {
-        console.error(`Failed to initialize chart after ${MAX_CHART_INIT_ATTEMPTS} attempts`);
+        console.error(`[DashboardView] Failed to initialize chart after ${MAX_CHART_INIT_ATTEMPTS} attempts`);
       }
     }
   });
 };
 
 const updateSalesChart = async (data) => {
-  console.log('Chart data input:', data);
+  console.log('[DashboardView] updateSalesChart called with data:', JSON.parse(JSON.stringify(data)));
   
   // Wait for DOM update to ensure canvas is rendered
   await nextTick();
   
   // Get canvas with fallbacks
   const canvas = getChartCanvas();
+  console.log('[DashboardView] Canvas in updateSalesChart:', canvas);
   
   // Ensure canvas exists
   if (!canvas) {
-    console.error('Chart canvas element not found, retrying in 100ms...');
+    console.error('[DashboardView] Chart canvas element NOT FOUND in updateSalesChart, retrying in 100ms...');
     // Try again after a short delay
     setTimeout(() => updateSalesChart(data), 100);
     return;
@@ -669,13 +629,14 @@ const updateSalesChart = async (data) => {
       ctx.fillText(t('noMonthlySalesData'), canvas.width / 2, canvas.height / 2);
       ctx.restore();
     } catch (error) {
-      console.error('Error creating empty chart:', error);
+      console.error('[DashboardView] Error creating empty chart:', error);
     }
     
     return;
   }
 
   try {
+    console.log('[DashboardView] Proceeding to create chart with data.');
     // Process the data to ensure dates are properly formatted
     const processedData = data.map(item => {
       // Handle different data formats

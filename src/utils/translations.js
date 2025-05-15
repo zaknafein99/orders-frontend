@@ -261,8 +261,88 @@ export const messages = {
     errorFetchingDailySales: 'Error al cargar ventas diarias',
     errorFetchingWeeklySales: 'Error al cargar ventas semanales',
     errorFetchingMonthlySales: 'Error al cargar ventas mensuales',
+    downloadPDF: 'Descargar PDF',
+    truckPdfInfo: 'Click en el botón PDF al lado de un móvil para descargar su reporte diario.',
+    generatePDFReport: 'Generar Reporte PDF',
+    noWeeklySalesData: 'No hay datos de ventas semanales disponibles',
+    selectTruckAndDateRange: 'Por favor seleccione un móvil y rango de fechas para generar el reporte',
+    // Add other dashboard specific keys if needed
+    loadingItems: 'Cargando ítems...',
+    availableItems: 'Items Disponibles',
+    inventoryWarnings: 'Advertencias de inventario',
+    inventoryAlertDetail: 'Solicitando {requested} unidades, pero solo hay {available} disponibles.',
+    currentOrder: 'Pedido Actual',
+    emptyOrder: 'El pedido está vacío',
+    addItemsInstruction: 'Agrega artículos desde la lista de disponibles.',
+    loadingTrucks: 'Cargando móviles...',
+    noTrucksAvailable: 'No hay móviles disponibles',
+    orderDate: 'Fecha del Pedido',
+    remove: 'Quitar',
+    inventoryProjectionNote: 'La existencia en inventario se actualizará cuando el pedido sea marcado como entregado.',
+    ordersPanel: 'Panel de Pedidos',
+    loadingOrders: 'Cargando pedidos...',
+    previous: 'Anterior',
+    next: 'Siguiente',
+    pageInfo: 'Página {currentPage} de {totalPages}',
+    confirmCancelOrderMsg: '¿Está seguro que desea cancelar este pedido? Esta acción no se puede deshacer y el pedido será eliminado permanentemente.',
+    keepOrder: 'No, mantener pedido',
+    yesCancelOrder: 'Sí, cancelar pedido',
+    itemsManagement: 'Gestión de Productos',
+    newItem: 'Nuevo Producto',
+    itemId: 'ID',
+    // itemName is already defined
+    // itemPrice is already defined
+    // itemCategory is already defined
+    // itemDescription is already defined
+    // quantity is already defined
+    // actions is already defined
+    confirmDeleteItemMsg: '¿Está seguro que desea eliminar el producto {itemName}?',
+    // delete is already defined
+    // cancel is already defined
+    // newCustomer is already defined
+    fullNamePlaceholder: 'Nombre completo',
+    phoneNumberPlaceholder: 'Número de teléfono',
+    fullAddressPlaceholder: 'Dirección completa',
+    notes: 'Notas',
+    additionalNotesPlaceholder: 'Notas adicionales',
+    createCustomer: 'Crear Cliente',
+    phoneNumberTooShort: 'El número de teléfono debe tener al menos 3 dígitos',
+    customerAlreadyExistsPhone: 'Ya existe un cliente con ese número de teléfono',
+    errorCreatingCustomerRetry: 'Error al crear el cliente. Por favor, intente nuevamente.',
+    // editItem is already defined
+    productNamePlaceholder: 'Nombre del producto',
+    productCategoryPlaceholder: 'Categoría del producto',
+    productDescriptionPlaceholder: 'Descripción del producto',
+    availableQuantityPlaceholder: 'Cantidad disponible',
+    updateItem: 'Actualizar Item',
+    createItem: 'Crear Item',
+    itemNameRequired: 'El nombre del producto es obligatorio',
+    itemPricePositive: 'El precio debe ser mayor que cero',
+    errorUpdatingItemRetry: 'Error al actualizar el item. Por favor, intente nuevamente.',
+    errorCreatingItemRetry: 'Error al crear el item. Por favor, intente nuevamente.',
+    supplier: 'Proveedor',
+    manageCustomers: 'Gestión de Clientes',
+    searchByPhone: 'Buscar por Teléfono',
+    enterPhoneNumberPlaceholder: 'Ingrese número de teléfono',
+    show: 'Mostrar',
+    records: 'registros',
+    loadingCustomers: 'Cargando clientes...',
+    noCustomersFound: 'No se encontraron clientes',
+    confirmDeleteCustomerMsg: '¿Está seguro que desea eliminar este cliente?',
+    errorLoadingCustomers: 'Error al cargar clientes. Por favor intente nuevamente.',
+    // errorSearchingCustomer is already defined
+    errorDeletingCustomer: 'Error al eliminar el cliente. Por favor intente nuevamente.',
+    category: 'Categoría',
+    available: 'Disponible',
+    afterOrder: 'Después del pedido',
+    addToOrder: 'Agregar al Pedido',
+    outOfStock: 'Sin Stock',
+    // noItemsAvailable is already defined
+    // errorFetchingStatistics is already defined
+    newCustomer: 'Nuevo Cliente', // Added for CustomersView
+    itemsSubtotal: 'Subtotal Productos', // Added for OrderTables.vue
     
-    // Customer search
+    // Customer search (already existing, ensure they are correct)
     searchCustomer: 'Buscar Cliente',
     searchByPhoneNumber: 'Buscar por número de teléfono',
     search: 'Buscar',
