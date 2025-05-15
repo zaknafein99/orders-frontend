@@ -207,12 +207,31 @@ const submitOrder = async () => {
       return;
     }
     
-    // Create order data object
+    // Create order data object with all required fields
     const orderData = {
-      customer: customer,
-      items: selectedItems.value,
-      truck: null // No truck assigned initially
+      customer: {
+        id: customer.id,
+        name: customer.name,
+        address: customer.address || '',
+        phoneNumber: customer.phoneNumber || '',
+        type: customer.type || 'E',
+        state: customer.state || 'A'
+      },
+      items: selectedItems.value.map(item => ({
+        id: item.id,
+        name: item.name,
+        description: item.description || '',
+        price: Number(item.price),
+        quantity: item.quantity,
+        category: item.category || 'Uncategorized'
+      })),
+      truck: null, // No truck assigned initially
+      date: new Date().toISOString().split('T')[0],
+      totalPrice: calculateTotal(),
+      status: 'PENDING'
     };
+    
+    console.log('Submitting order data:', JSON.stringify(orderData, null, 2));
     
     // Submit order using OrderService
     const createdOrder = await OrderService.createOrder(orderData);

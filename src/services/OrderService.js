@@ -219,9 +219,11 @@ export default {
       },
       items: orderData.items.map(item => ({
         id: item.id,
+        name: item.name,
+        description: item.description || null,
         price: item.price,
         quantity: item.quantity,
-        name: item.name
+        category: item.category || null
       })),
       totalPrice: calculateOrderTotal(orderData.items),
       status: 'PENDING',

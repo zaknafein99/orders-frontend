@@ -28,7 +28,7 @@ export default defineConfig({
     },
     proxy: {
       '/auth': {
-        target: 'http://localhost:8080',
+        target: 'http://localhost:8082',
         changeOrigin: true,
         secure: false,
         configure: (proxy, options) => {
@@ -52,7 +52,7 @@ export default defineConfig({
         }
       },
       '/customer': {
-        target: 'http://localhost:8080',
+        target: 'http://localhost:8082',
         changeOrigin: true,
         secure: false,
         configure: (proxy, options) => {
@@ -76,7 +76,7 @@ export default defineConfig({
         }
       },
       '/orders': {
-        target: 'http://localhost:8080',
+        target: 'http://localhost:8082',
         changeOrigin: true,
         secure: false,
         configure: (proxy, options) => {
@@ -100,7 +100,7 @@ export default defineConfig({
         }
       },
       '/truck': {
-        target: 'http://localhost:8080',
+        target: 'http://localhost:8082',
         changeOrigin: true,
         secure: false,
         configure: (proxy, options) => {
@@ -124,7 +124,7 @@ export default defineConfig({
         }
       },
       '/item': {
-        target: 'http://localhost:8080',
+        target: 'http://localhost:8082',
         changeOrigin: true,
         secure: false,
         configure: (proxy, options) => {
@@ -148,7 +148,7 @@ export default defineConfig({
         }
       },
       '/dashboard': {
-        target: 'http://localhost:8080',
+        target: 'http://localhost:8082',
         changeOrigin: true,
         secure: false,
         configure: (proxy, options) => {
@@ -170,6 +170,11 @@ export default defineConfig({
             console.error('Dashboard proxy error:', err)
           })
         }
+      },
+      '/api': {
+        target: 'http://localhost:8082',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '')
       }
     }
   }
