@@ -70,14 +70,6 @@
                 class="form-input"
                 @change="fetchDailySales"
               >
-              <button 
-                @click="downloadDailySalesPDF" 
-                class="btn btn-primary flex items-center gap-2"
-                :disabled="loading"
-              >
-                <i class="fas fa-file-pdf"></i>
-                {{ $t('downloadPDF', { default: 'Descargar PDF'}) }}
-              </button>
             </div>
           </div>
           <div class="overflow-x-auto">
