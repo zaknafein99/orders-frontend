@@ -28,6 +28,8 @@
               <th class="date-column">{{ $t('createdAt') }}</th>
               <th>{{ $t('customer') }}</th>
               <th>{{ $t('itemCount') }}</th>
+              <th>{{ $t('itemsSubtotal', { default: 'Subtotal Items'}) }}</th>
+              <th>{{ $t('deliveryFee', { default: 'Costo Envío'}) }}</th>
               <th>{{ $t('total') }}</th>
               <th>{{ $t('truck', { default: 'Móvil'}) }}</th>
               <th>{{ $t('actions') }}</th>
@@ -43,7 +45,9 @@
                 </div>
               </td>
               <td>{{ order.items.length }}</td>
-              <td>${{ order.total.toFixed(2) }}</td>
+              <td>{{ formatCurrency(order.total || 0) }}</td>
+              <td>{{ formatCurrency(order.flete || 0) }}</td>
+              <td><b>{{ formatCurrency((order.total || 0) + (order.flete || 0)) }}</b></td>
               <td>
                 <div class="truck-selection-container">
                   <select 
@@ -94,6 +98,8 @@
               <th class="date-column">{{ $t('createdAt') }}</th>
               <th>{{ $t('customer') }}</th>
               <th>{{ $t('itemCount') }}</th>
+              <th>{{ $t('itemsSubtotal', { default: 'Subtotal Items'}) }}</th>
+              <th>{{ $t('deliveryFee', { default: 'Costo Envío'}) }}</th>
               <th>{{ $t('total') }}</th>
               <th>{{ $t('truck', { default: 'Móvil'}) }}</th>
               <th class="date-column">{{ $t('deliveredAt') }}</th>
@@ -109,7 +115,9 @@
                 </div>
               </td>
               <td>{{ order.items.length }}</td>
-              <td>${{ order.total.toFixed(2) }}</td>
+              <td>{{ formatCurrency(order.total || 0) }}</td>
+              <td>{{ formatCurrency(order.flete || 0) }}</td>
+              <td><b>{{ formatCurrency((order.total || 0) + (order.flete || 0)) }}</b></td>
               <td>
                 <div class="truck-selection-container">
                   <select 
@@ -161,7 +169,7 @@ import { eventBus } from '../utils/eventBus'
 import OrderService from '../services/OrderService'
 import TruckService from '../services/TruckService'
 import { translations } from '../utils/translations'
-import { formatDate } from '../utils/formatters'
+import { formatDate, formatCurrency } from '../utils/formatters'
 
 // Track truck assignments for orders that don't have one yet
 const orderTrucks = reactive({})
@@ -254,7 +262,8 @@ const updateOrdersSmooth = (newPendingData, newDeliveredData) => {
       customerPhone: order.customer.phoneNumber,
       createdAt: new Date(order.date),
       items: [...order.items],
-      total: order.totalPrice,
+      total: order.totalPrice, // This is the subtotal of items
+      flete: order.flete || 0, // Add flete here
       truck: order.truck ? {
         id: order.truck.id,
         name: order.truck.name
@@ -290,7 +299,8 @@ const updateOrdersSmooth = (newPendingData, newDeliveredData) => {
       createdAt: new Date(order.date),
       items: [...order.items],
       deliveredAt: new Date(order.date),
-      total: order.totalPrice,
+      total: order.totalPrice, // This is the subtotal of items
+      flete: order.flete || 0, // Add flete here
       truck: order.truck ? {
         id: order.truck.id,
         name: order.truck.name
