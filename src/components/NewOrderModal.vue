@@ -64,6 +64,7 @@
             @submit="submitOrder"
             @update-truck="updateTruck"
             @update-date="updateDate"
+            @update-delivery-fee="updateDeliveryFee"
           />
         </div>
       </div>
@@ -134,6 +135,7 @@ const availableTrucks = ref([])
 const isLoadingTrucks = ref(false)
 const trucksError = ref('')
 const orderDate = ref(new Date().toISOString().split('T')[0])
+const deliveryFee = ref(50) // Default delivery fee of 50
 const isSubmittingOrder = ref(false)
 const orderError = ref('')
 const orderSuccess = ref('')
@@ -367,6 +369,11 @@ const updateDate = (date) => {
   orderDate.value = date
 }
 
+const updateDeliveryFee = (fee) => {
+  console.log(`Delivery fee updated to: ${fee}`)
+  deliveryFee.value = fee
+}
+
 const submitOrder = async () => {
   if (!props.customer) {
     console.error('No customer selected for order')
@@ -397,14 +404,16 @@ const submitOrder = async () => {
       customer: props.customer,
       items: currentOrder.items,
       truck: selectedTruck.value,
-      date: orderDate.value
+      date: orderDate.value,
+      flete: deliveryFee.value
     })
 
     const orderData = createOrderObject(
       props.customer,
       currentOrder.items,
       selectedTruck.value,
-      orderDate.value
+      orderDate.value,
+      deliveryFee.value
     )
 
     console.log('Order data created:', orderData)

@@ -225,7 +225,8 @@ export default {
         quantity: item.quantity,
         category: item.category || null
       })),
-      totalPrice: calculateOrderTotal(orderData.items),
+      totalPrice: calculateOrderTotal(orderData.items) + (orderData.flete || 0),
+      flete: orderData.flete || 0, // Add delivery fee field, default to 0 if not provided
       status: 'PENDING',
       date: new Date().toISOString().split('T')[0]
     }
@@ -329,7 +330,7 @@ export default {
   assignTruckToOrder(orderId, truckId) {
     console.log(`Assigning truck ${truckId} to order ${orderId}`)
     
-    return api.put(`/orders/${orderId}/truck/${truckId}`)
+    return api.post(`/orders/${orderId}/truck`, { truckId: truckId })
       .then(response => {
         console.log(`Truck ${truckId} assigned to order ${orderId} successfully:`, response.data)
         return response.data

@@ -68,10 +68,26 @@
         <p class="inventory-note">{{ inventoryProjectionMessage || 'La orden podrá procesarse de todas formas.' }}</p>
       </div>
       
+      <!-- Delivery Fee -->
+      <div class="delivery-fee">
+        <label for="delivery-fee">{{ translations.deliveryFee || 'Delivery Fee' }}:</label>
+        <div class="delivery-fee-input">
+          <span class="currency-symbol">$</span>
+          <input 
+            type="number" 
+            id="delivery-fee" 
+            v-model="deliveryFee" 
+            min="0" 
+            step="1"
+            @change="updateDeliveryFee"
+          />
+        </div>
+      </div>
+      
       <!-- Order summary -->
       <div class="order-total-section">
         <div class="order-total">
-          <strong>{{ translations.total }}:</strong> {{ formatPrice(calculateOrderTotal(items)) }}
+          <strong>{{ translations.total }}:</strong> {{ formatPrice(calculateOrderTotal(items) + Number(deliveryFee)) }}
         </div>
         <button 
           @click="submitOrder" 
@@ -140,11 +156,12 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['remove-item', 'submit', 'update-truck', 'update-date'])
+const emit = defineEmits(['remove-item', 'submit', 'update-truck', 'update-date', 'update-delivery-fee'])
 
 // State
 const selectedTruck = ref(props.trucks.length > 0 ? props.trucks[0] : null)
 const orderDate = ref(new Date().toISOString().split('T')[0])
+const deliveryFee = ref(50) // Default delivery fee value of 50
 
 // Watch for trucks changes to set default selected truck
 watch(() => props.trucks, (newTrucks) => {
@@ -172,7 +189,8 @@ const submitOrder = () => {
     props.customer,
     props.items,
     selectedTruck.value,
-    orderDate.value
+    orderDate.value,
+    Number(deliveryFee.value)
   )
   
   // Validate order before submitting
@@ -191,6 +209,16 @@ const updateTruck = () => {
 
 const updateDate = () => {
   emit('update-date', orderDate.value)
+}
+
+const updateDeliveryFee = () => {
+  console.log(`Delivery fee updated to: ${deliveryFee.value}`)
+  // Ensure the delivery fee is at least 0
+  if (Number(deliveryFee.value) < 0) {
+    deliveryFee.value = 0
+  }
+  // Emit event for parent components if needed
+  emit('update-delivery-fee', Number(deliveryFee.value))
 }
 </script>
 
@@ -405,6 +433,33 @@ const updateDate = () => {
   color: #9ca3af;
   margin-top: 0.75rem;
   margin-bottom: 0;
+}
+
+.delivery-fee {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.delivery-fee-input {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.delivery-fee-input input {
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  background-color: #f9fafb;
+  font-size: 1rem;
+  width: 100%;
+}
+
+.delivery-fee-input input:focus {
+  outline: none;
+  border-color: var(--primary-color, #1d4ed8);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
 }
 
 .order-total-section {

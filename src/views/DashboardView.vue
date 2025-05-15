@@ -87,6 +87,7 @@
                   <th>{{ $t('truck') }}</th>
                   <th>{{ $t('orders') }}</th>
                   <th>{{ $t('totalSales') }}</th>
+                  <th>{{ $t('actions') || 'Actions' }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -94,9 +95,22 @@
                   <td>{{ $t('truck') }} {{ truckId }}</td>
                   <td>{{ sales.orderCount }}</td>
                   <td>${{ formatNumber(sales.totalSales) }}</td>
+                  <td>
+                    <button 
+                      @click="downloadTruckDeliveryReport(truckId, selectedDate, selectedDate)" 
+                      class="btn btn-sm btn-primary flex items-center justify-center gap-1"
+                      :disabled="loading"
+                    >
+                      <i class="fas fa-file-pdf"></i>
+                      {{ $t('downloadPDF') || 'PDF' }}
+                    </button>
+                  </td>
                 </tr>
               </tbody>
             </table>
+          </div>
+          <div class="mt-4 text-sm text-slate-500">
+            <p><i class="fas fa-info-circle mr-1"></i> {{ $t('truckPdfInfo') || 'Click on the PDF button next to a truck to download its daily report.' }}</p>
           </div>
         </div>
 
@@ -158,6 +172,63 @@
           <canvas ref="salesChartCanvas" id="salesChart"></canvas>
         </div>
       </div>
+
+      <!-- Truck Delivery Report -->
+      <div class="card bg-white p-4 rounded-lg shadow mb-6">
+        <h3 class="text-lg font-semibold text-slate-700 mb-4">{{ $t('truckDeliveryReport') || 'Truck Delivery Report' }}</h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+          <!-- Truck Selection -->
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">{{ $t('selectTruck') || 'Select Truck' }}</label>
+            <select 
+              v-model="selectedTruckId" 
+              class="form-select w-full rounded-md border-slate-300 shadow-sm"
+            >
+              <option value="">{{ $t('selectTruck') || 'Select Truck' }}</option>
+              <option v-for="truck in trucks" :key="truck.id" :value="truck.id">
+                {{ truck.name }}
+              </option>
+            </select>
+          </div>
+          
+          <!-- Start Date -->
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">{{ $t('startDate') || 'Start Date' }}</label>
+            <input 
+              type="date" 
+              v-model="reportStartDate" 
+              class="form-input w-full rounded-md border-slate-300 shadow-sm"
+            >
+          </div>
+          
+          <!-- End Date -->
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">{{ $t('endDate') || 'End Date' }}</label>
+            <input 
+              type="date" 
+              v-model="reportEndDate" 
+              class="form-input w-full rounded-md border-slate-300 shadow-sm"
+            >
+          </div>
+          
+          <!-- Generate Report Button -->
+          <div class="flex items-end">
+            <button 
+              @click="downloadTruckDeliveryReport" 
+              class="btn btn-primary w-full flex items-center justify-center gap-2"
+              :disabled="!selectedTruckId || !reportStartDate || !reportEndDate || loading"
+            >
+              <i class="fas fa-file-pdf"></i>
+              {{ $t('generatePDFReport') || 'Generate PDF Report' }}
+            </button>
+          </div>
+        </div>
+        
+        <div v-if="!selectedTruckId || !reportStartDate || !reportEndDate" class="text-center py-4 text-slate-500">
+          {{ $t('selectTruckAndDateRange') || 'Please select a truck and date range to generate a report' }}
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -166,6 +237,7 @@
 import { ref, onMounted, onBeforeUnmount, nextTick, watch } from 'vue'
 import axios from 'axios'
 import DashboardService from '../services/DashboardService'
+import TruckService from '../services/TruckService'
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -215,15 +287,10 @@ const MAX_CHART_INIT_ATTEMPTS = 5;
 // Date selections
 const selectedDate = ref(format(new Date(), 'yyyy-MM-dd'))
 const selectedWeekStart = ref(getStartOfWeek())
-
-// Function to get the start of the current week (Monday)
-function getStartOfWeek() {
-  const today = new Date()
-  const day = today.getDay() // 0 is Sunday, 1 is Monday, etc.
-  const diff = today.getDate() - day + (day === 0 ? -6 : 1) // Adjust for Sunday (go back to previous Monday)
-  const monday = new Date(today.setDate(diff))
-  return format(monday, 'yyyy-MM-dd')
-}
+const selectedTruckId = ref('')
+const reportStartDate = ref(format(new Date(), 'yyyy-MM-dd'))
+const reportEndDate = ref(format(addDays(new Date(), 7), 'yyyy-MM-dd'))
+const trucks = ref([])
 
 // Canvas reference
 const salesChartCanvas = ref(null)
@@ -239,6 +306,15 @@ const dailySales = ref({ truckSales: {} })
 const weeklySales = ref({ dailySales: [] })
 const loading = ref(true)
 const chartData = ref([]) // Store chart data
+
+// Function to get the start of the current week (Monday)
+function getStartOfWeek() {
+  const today = new Date()
+  const day = today.getDay() // 0 is Sunday, 1 is Monday, etc.
+  const diff = today.getDate() - day + (day === 0 ? -6 : 1) // Adjust for Sunday (go back to previous Monday)
+  const monday = new Date(today.setDate(diff))
+  return format(monday, 'yyyy-MM-dd')
+}
 
 // Watch for date changes to refresh data
 watch(selectedWeekStart, (newDate, oldDate) => {
@@ -256,23 +332,17 @@ watch(selectedDate, (newDate, oldDate) => {
 });
 
 onMounted(async () => {
+  loading.value = true;
   try {
-    // Wait for DOM to be ready
-    await nextTick();
-    // Start data fetching
+    // Fetch all required data
     await fetchAllData();
+    
+    // Initialize chart after data is loaded
+    initChart();
   } catch (error) {
-    console.error(t('errorFetchingDashboardData'), error);
+    console.error('Error initializing dashboard:', error);
   } finally {
     loading.value = false;
-    // Try to initialize chart after loading is complete and DOM is updated
-    nextTick(() => {
-      if (chartData.value.length > 0) {
-        initializeChart(chartData.value);
-      } else {
-        initializeChart([]);
-      }
-    });
   }
 })
 
@@ -284,19 +354,40 @@ onBeforeUnmount(() => {
   }
 })
 
+// Fetch all data at once
 const fetchAllData = async () => {
   try {
-    loading.value = true
-    await Promise.all([
-      fetchStatistics(),
-      fetchDailySales(),
-      fetchWeeklySales(),
-      fetchMonthlySales()
+    const [statsResponse, dailyResponse, weeklyResponse, trucksResponse] = await Promise.all([
+      DashboardService.getStatistics(),
+      DashboardService.getDailySales(selectedDate.value),
+      DashboardService.getWeeklySales(selectedWeekStart.value),
+      TruckService.getAllTrucks()
     ])
+
+    // Update state with fetched data
+    statistics.value = statsResponse
+    dailySales.value = dailyResponse
+    
+    // Process weekly sales data
+    if (weeklyResponse.dailySales) {
+      const today = new Date().toISOString().split('T')[0]
+      weeklySales.value = {
+        ...weeklyResponse,
+        dailySales: weeklyResponse.dailySales.map(day => ({
+          ...day,
+          isToday: day.date === today,
+          formattedDate: formatDate(new Date(day.date), t('locale'))
+        }))
+      }
+    }
+    
+    // Store trucks
+    trucks.value = trucksResponse
+
+    // Prepare chart data
+    prepareChartData(statsResponse.month?.dailySales || [])
   } catch (error) {
-    console.error(t('errorFetchingDashboardData'), error)
-  } finally {
-    loading.value = false
+    console.error('Error fetching dashboard data:', error)
   }
 }
 
@@ -721,6 +812,33 @@ const downloadDailySalesPDF = async () => {
     // You might want to show an error message to the user here
   } finally {
     loading.value = false;
+  }
+};
+
+const downloadTruckDeliveryReport = async (truckId = null, startDate = null, endDate = null) => {
+  try {
+    loading.value = true;
+    // Use provided parameters or fall back to the form values
+    const truck = truckId || selectedTruckId.value;
+    const start = startDate || reportStartDate.value;
+    const end = endDate || reportEndDate.value;
+    
+    await DashboardService.downloadTruckDeliveryReport(truck, start, end);
+  } catch (error) {
+    console.error('Error downloading truck delivery report:', error);
+    // You might want to show an error message to the user here
+  } finally {
+    loading.value = false;
+  }
+};
+
+// Function to fetch all trucks
+const fetchTrucks = async () => {
+  try {
+    const response = await TruckService.getAllTrucks();
+    trucks.value = response;
+  } catch (error) {
+    console.error('Error fetching trucks:', error);
   }
 };
 </script>

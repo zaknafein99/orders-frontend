@@ -84,9 +84,10 @@ export const filterItemsByText = (items, searchTerm) => {
  * @param {Array} items - Array of order items
  * @param {Object} truck - Truck object
  * @param {String} date - Order date
+ * @param {Number} deliveryFee - Delivery fee amount (optional, defaults to 0)
  * @returns {Object} - New order object formatted for the API
  */
-export const createOrderObject = (customer, items, truck, date) => {
+export const createOrderObject = (customer, items, truck, date, deliveryFee = 0) => {
   // Calculate the total price
   const totalPrice = calculateOrderTotal(items)
   
@@ -115,7 +116,8 @@ export const createOrderObject = (customer, items, truck, date) => {
       name: truck.name
     } : null,
     date: date,
-    totalPrice: calculateOrderTotal(items),
+    totalPrice: calculateOrderTotal(items) + Number(deliveryFee),
+    flete: Number(deliveryFee),
     status: "PENDING"
   }
 }

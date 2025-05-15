@@ -171,6 +171,30 @@ export default defineConfig({
           })
         }
       },
+      '/reports': {
+        target: 'http://localhost:8082',
+        changeOrigin: true,
+        secure: false,
+        configure: (proxy, options) => {
+          proxy.on('proxyReq', (proxyReq, req, res) => {
+            console.log('Proxying reports request:', {
+              method: req.method,
+              url: req.url,
+              headers: req.headers
+            })
+          })
+          proxy.on('proxyRes', (proxyRes, req, res) => {
+            console.log('Received reports response:', {
+              status: proxyRes.statusCode,
+              url: req.url,
+              headers: proxyRes.headers
+            })
+          })
+          proxy.on('error', (err, req, res) => {
+            console.error('Reports proxy error:', err)
+          })
+        }
+      },
       '/api': {
         target: 'http://localhost:8082',
         changeOrigin: true,
